@@ -21,6 +21,10 @@
       url = "git+https://github.com/rebizzz/niri-flake.git?ref=fix/libdisplay-info-dep";
       # inputs.nixpkgs.follows = "nixpkgs";
     };
+    noctalia = {
+      url = "github:noctalia-dev/noctalia";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = inputs: inputs.flake-parts.lib.mkFlake { inherit inputs; } (inputs.import-tree ./modules);
