@@ -7,6 +7,13 @@
 # binds/layout/window-rules in one place stops the two entry points drifting.
 {
   prefer-no-csd = true;
+  input = {
+    keyboard = {
+      xkb = {
+        layout = "ie";
+      };
+    };
+  };
   layout = {
     always-center-single-column = true;
     default-column-width = {
