@@ -37,6 +37,7 @@
     modules = [
       config.flake.modules.nixos.steam
       config.flake.modules.nixos.niri
+      config.flake.modules.nixos.noctalia
       inputs.home-manager.nixosModules.home-manager
       {
         # --- system-level (nixos) modules under test ---
