@@ -3,7 +3,7 @@
     pkgs = inputs.nixpkgs.legacyPackages.x86_64-linux;
     extraSpecialArgs = { inherit inputs; };
     modules = [
-      config.flake.homeModules.niri
+      config.flake.modules.homeManager.niri
       {
         home.username = "test";
         home.homeDirectory = "/home/test";

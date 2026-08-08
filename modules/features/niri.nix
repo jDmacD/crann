@@ -1,5 +1,5 @@
 { inputs, ... }: {
-  flake.homeModules.niri =
+  flake.modules.homeManager.niri =
     {
       pkgs,
       lib,
@@ -18,10 +18,13 @@
 
         package = lib.mkOption {
           type = lib.types.package;
-          # niri-stable (25.08) fails to build against nixpkgs' libdisplay-info
-          # 0.3; niri-unstable dropped that dependency and builds cleanly.
-          default = pkgs.niri-unstable;
-          defaultText = lib.literalExpression "pkgs.niri-unstable";
+          # Pull niri straight from the niri-flake input rather than via an
+          # overlay, so this module is portable to any consumer (standalone HM,
+          # useGlobalPkgs, flake-parts, plain flake) without touching their
+          # nixpkgs.*. niri-unstable is used because niri-stable (25.08) fails
+          # to build against nixpkgs' libdisplay-info 0.3.
+          default = inputs.niri.packages.${pkgs.stdenv.hostPlatform.system}.niri-unstable;
+          defaultText = lib.literalExpression "inputs.niri.packages.\${system}.niri-unstable";
           description = "The niri package to use.";
         };
         extraSettings = lib.mkOption {
@@ -32,8 +35,6 @@
 
       };
       config = {
-
-        nixpkgs.overlays = [ inputs.niri.overlays.niri ];
 
         programs.niri = {
           enable = true;
