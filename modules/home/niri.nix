@@ -33,20 +33,8 @@
           description = "Extra per-host niri settings merged in.";
         };
 
-        xdgPortal.enable = lib.mkEnableOption "the GTK and GNOME xdg-desktop-portal setup for niri" // {
-          default = true;
-        };
-
       };
       config = {
-
-        xdg.portal = lib.mkIf cfg.xdgPortal.enable {
-          enable = true;
-          extraPortals = with pkgs; [
-            xdg-desktop-portal-gtk
-            xdg-desktop-portal-gnome
-          ];
-        };
 
         programs.niri = {
           enable = true;
