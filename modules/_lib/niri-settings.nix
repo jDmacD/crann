@@ -15,10 +15,15 @@
     };
   };
   layout = {
-    always-center-single-column = true;
     default-column-width = {
       proportion = 0.50;
     };
+    preset-column-widths = [
+      { proportion = 1. / 3.; }
+      { proportion = 1. / 2.; }
+      { proportion = 2. / 3.; }
+      # { fixed = 1920; }
+    ];
   };
   window-rules = [
     {
@@ -63,7 +68,28 @@
     "Mod+Ctrl+Down".action.move-window-down = { };
     "Mod+Ctrl+Up".action.move-window-up = { };
 
+    # Cycle through widths set in preset-column-widths.
+    # Mod+R { switch-preset-column-width; }
+    "Mod+R".action.switch-preset-column-width = { };
+    # Cycling through the presets in reverse order is also possible.
+    # Mod+Shift+R { switch-preset-column-width-back; }
+    "Mod+Shift+R".action.switch-preset-column-width-back = { };
+    # Mod+Ctrl+Shift+R { switch-preset-window-height; }
+    "Mod+Ctrl+Shift+R".action.switch-preset-window-height = { };
+    # Mod+Ctrl+R { reset-window-height; }
+    "Mod+Ctrl+R".action.reset-window-heigh = { };
+    # Mod+F { maximize-column; }
+    "Mod+F".action.maximize-column = { };
+    # Mod+Shift+F { fullscreen-window; }
+    "Mod+Shift+F".action.fullscreen-window = { };
+
+    # While maximize-column leaves gaps and borders around the window,
+    # maximize-window-to-edges doesn't: the window expands to the edges of the screen.
+    # This bind corresponds to normal window maximizing,
+    # e.g. by double-clicking on the titlebar.
+    # Mod+M { maximize-window-to-edges; }
     "Mod+F".action.maximize-window-to-edges = { };
+
     "Mod+X".action.close-window = { };
     "Mod+W".action.toggle-column-tabbed-display = { };
     "Mod+1".action.focus-workspace = 1;
