@@ -19,22 +19,66 @@
   # entry point for non-NixOS home-manager). On NixOS the nixos module owns the
   # niri home config instead — see the note in the system config below.
   flake.homeConfigurations.test-home = inputs.home-manager.lib.homeManagerConfiguration {
-    pkgs = inputs.nixpkgs.legacyPackages.x86_64-linux;
+    # Unfree is allowed here (in the host, never in a feature module) because
+    # the vscode module under test pulls an unfree package.
+    pkgs = import inputs.nixpkgs {
+      system = "x86_64-linux";
+      config.allowUnfree = true;
+    };
     extraSpecialArgs = { inherit inputs; };
     modules = [
       config.flake.modules.homeManager.niri
       config.flake.modules.homeManager.stylix
       config.flake.modules.homeManager.vscode
       config.flake.modules.homeManager.ai-utils
-      {
-        crann.stylix.enable = true;
-        crann.vscode.enable = true;
-        crann.ai-utils.enable = true;
+      config.flake.modules.homeManager.shells
+      config.flake.modules.homeManager.terminal
+      config.flake.modules.homeManager.git
+      config.flake.modules.homeManager.kubernetes
+      config.flake.modules.homeManager.desktop
+      (
+        { pkgs, ... }:
+        {
+          crann.stylix.enable = true;
+          crann.vscode.enable = true;
+          crann.ai-utils.enable = true;
 
-        home.username = "test";
-        home.homeDirectory = "/home/test";
-        home.stateVersion = "26.05";
-      }
+          crann.shells.enable = true;
+          crann.shells.flakeInspectPath = "/home/test/blueprint";
+
+          crann.terminal.enable = true;
+
+          crann.git.enable = true;
+          crann.git.userName = "test";
+          crann.git.userEmail = "test@example.invalid";
+
+          crann.kubernetes.enable = true;
+          crann.kubernetes.extraPackages = [ pkgs.k3d ];
+
+          crann.desktop.enable = true;
+
+          # Theming for the terminal module is surfaced here, on the host, not
+          # baked into the module. Stylix autoEnables every target it knows
+          # about; this is the seam where a host turns individual ones off.
+          crann.stylix.extraSettings.targets = {
+            ghostty.enable = true;
+            foot.enable = true;
+            kitty.enable = false;
+            bat.enable = true;
+            btop.enable = true;
+            starship.enable = true;
+            zellij.enable = true;
+            # Not a terminal target: stylix autoEnables kde, whose
+            # apply-plasma-theme script fails to build on this scaffold. We do not
+            # run plasma, so turn it off here rather than in a feature module.
+            kde.enable = false;
+          };
+
+          home.username = "test";
+          home.homeDirectory = "/home/test";
+          home.stateVersion = "26.05";
+        }
+      )
     ];
   };
 
@@ -46,12 +90,17 @@
       config.flake.modules.nixos.niri
       config.flake.modules.nixos.noctalia
       config.flake.modules.nixos.stylix
+      config.flake.modules.nixos.desktop
       inputs.home-manager.nixosModules.home-manager
       (
         { pkgs, ... }:
         {
           # --- system-level (nixos) modules under test ---
           crann.steam.enable = true;
+
+          # audio / bluetooth / upower / gvfs. Note this is the *nixos* class
+          # `crann.desktop`; the home class has its own, set on the user below.
+          crann.desktop.enable = true;
 
           # stylix ships a default scheme/fonts/cursor, so enabling it is enough.
           # extraSettings is merged last and overrides any crann default at the
@@ -87,7 +136,25 @@
             users.test = {
               imports = [
                 config.flake.modules.homeManager.noctalia
+                config.flake.modules.homeManager.shells
+                config.flake.modules.homeManager.terminal
+                config.flake.modules.homeManager.git
+                config.flake.modules.homeManager.kubernetes
+                config.flake.modules.homeManager.desktop
               ];
+              # Same modules as test-home, exercised through the useGlobalPkgs
+              # path this time.
+              crann.shells.enable = true;
+              crann.terminal.enable = true;
+              crann.kubernetes.enable = true;
+              crann.desktop.enable = true;
+              # Identity left unset here on purpose — exercises the nullable
+              # userName/userEmail path, where crann emits no user.* at all.
+              crann.git.enable = true;
+              # The nixos stylix module injects stylix's *home* module into each
+              # user, so kde — whose apply-plasma-theme script fails to build on
+              # this scaffold — is turned off here rather than system-wide.
+              stylix.targets.kde.enable = false;
               home.stateVersion = "26.05";
             };
           };

@@ -36,7 +36,7 @@
       };
 
       config = lib.mkIf cfg.enable {
-        
+
         programs.claude-code = {
           enable = cfg.claude-code.enable;
           package = cfg.claude-code.package;
