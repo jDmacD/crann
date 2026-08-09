@@ -39,6 +39,7 @@
       (
         { pkgs, ... }:
         {
+          crann.niri.enable = true;
           crann.stylix.enable = true;
           crann.vscode.enable = true;
           crann.ai-utils.enable = true;
@@ -98,6 +99,9 @@
           # --- system-level (nixos) modules under test ---
           crann.steam.enable = true;
 
+          # The nixos noctalia module contributes only the cachix substituter.
+          crann.noctalia.cache.enable = true;
+
           # audio / bluetooth / upower / gvfs. Note this is the *nixos* class
           # `crann.desktop`; the home class has its own, set on the user below.
           crann.desktop.enable = true;
@@ -122,6 +126,7 @@
           # flake.modules.homeManager.niri — doing both would double-declare
           # programs.niri.*. The standalone home module is exercised separately by
           # flake.homeConfigurations.test-home.
+          crann.niri.enable = true;
           crann.niri.extraSettings = {
             spawn-at-startup = [
               { command = [ "noctalia" ]; }
@@ -144,6 +149,7 @@
               ];
               # Same modules as test-home, exercised through the useGlobalPkgs
               # path this time.
+              crann.noctalia.enable = true;
               crann.shells.enable = true;
               crann.terminal.enable = true;
               crann.kubernetes.enable = true;

@@ -39,9 +39,7 @@
 
       options.crann.niri = {
 
-        enable = lib.mkEnableOption "the niri NixOS system layer (portal, session, polkit, keyring)" // {
-          default = true;
-        };
+        enable = lib.mkEnableOption "the niri NixOS system layer (portal, session, polkit, keyring)";
 
         package = lib.mkOption {
           type = lib.types.package;

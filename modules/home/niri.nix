@@ -22,6 +22,8 @@
 
       options.crann.niri = {
 
+        enable = lib.mkEnableOption "niri (standalone home-manager)";
+
         package = lib.mkOption {
           type = lib.types.package;
           # Pull niri straight from the niri-flake input rather than via an
@@ -40,7 +42,7 @@
         };
 
       };
-      config = {
+      config = lib.mkIf cfg.enable {
 
         programs.niri = {
           enable = true;

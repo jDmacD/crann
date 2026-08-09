@@ -19,6 +19,8 @@
 
       options.crann.noctalia = {
 
+        enable = lib.mkEnableOption "the noctalia shell";
+
         extraSettings = lib.mkOption {
           type = lib.types.attrsOf lib.types.anything;
           default = { };
@@ -27,7 +29,7 @@
 
       };
 
-      config = {
+      config = lib.mkIf cfg.enable {
 
         programs.noctalia = {
           enable = true;

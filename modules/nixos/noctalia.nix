@@ -20,11 +20,7 @@
       cfg = config.crann.noctalia;
     in
     {
-      options.crann.noctalia.cache.enable =
-        lib.mkEnableOption "the noctalia binary cache substituter"
-        // {
-          default = true;
-        };
+      options.crann.noctalia.cache.enable = lib.mkEnableOption "the noctalia binary cache substituter";
 
       config = lib.mkIf cfg.cache.enable {
         nix.settings = {
