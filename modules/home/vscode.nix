@@ -61,12 +61,12 @@
                   cSpell.enabledFileTypes = {
                     "*" = false;
                   };
-                  markdown-preview-enhanced.pandocPath = "${pkgs.pandoc}/bin/pandoc";
-                  markdown-preview-enhanced.latexEngine = "${pkgs.texliveFull}/bin/xelatex";
-                  markdown-preview-enhanced.imageMagickPath = "${pkgs.imagemagick}/bin/magick";
-                  markdown-preview-enhanced.chromePath = "${pkgs.ungoogled-chromium}/bin/chromium";
-                  markdown-preview-enhanced.usePandocParser = true;
-                  markdown-preview-enhanced.krokiServer = "https://kroki.heanet.io";
+                  # markdown-preview-enhanced.pandocPath = "${pkgs.pandoc}/bin/pandoc";
+                  # markdown-preview-enhanced.latexEngine = "${pkgs.texliveFull}/bin/xelatex";
+                  # markdown-preview-enhanced.imageMagickPath = "${pkgs.imagemagick}/bin/magick";
+                  # markdown-preview-enhanced.chromePath = "${pkgs.ungoogled-chromium}/bin/chromium";
+                  # markdown-preview-enhanced.usePandocParser = true;
+                  # markdown-preview-enhanced.krokiServer = "https://kroki.heanet.io";
                 }
                 cfg.extraUserSettings
               ];
@@ -81,7 +81,7 @@
                   mechatroner.rainbow-csv
                   signageos.signageos-vscode-sops
                   streetsidesoftware.code-spell-checker
-                  shd101wyy.markdown-preview-enhanced
+                  # shd101wyy.markdown-preview-enhanced
                   anthropic.claude-code
                   gitlab.gitlab-workflow
                   hashicorp.terraform
