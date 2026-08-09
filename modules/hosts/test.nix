@@ -25,9 +25,11 @@
       config.flake.modules.homeManager.niri
       config.flake.modules.homeManager.stylix
       config.flake.modules.homeManager.vscode
+      config.flake.modules.homeManager.ai-utils
       {
         crann.stylix.enable = true;
         crann.vscode.enable = true;
+        crann.ai-utils.enable = true;
 
         home.username = "test";
         home.homeDirectory = "/home/test";
