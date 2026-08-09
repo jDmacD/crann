@@ -88,7 +88,7 @@
     # This bind corresponds to normal window maximizing,
     # e.g. by double-clicking on the titlebar.
     # Mod+M { maximize-window-to-edges; }
-    "Mod+F".action.maximize-window-to-edges = { };
+    "Mod+M".action.maximize-window-to-edges = { };
 
     "Mod+X".action.close-window = { };
     "Mod+W".action.toggle-column-tabbed-display = { };
