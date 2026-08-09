@@ -77,7 +77,7 @@
     # Mod+Ctrl+Shift+R { switch-preset-window-height; }
     "Mod+Ctrl+Shift+R".action.switch-preset-window-height = { };
     # Mod+Ctrl+R { reset-window-height; }
-    "Mod+Ctrl+R".action.reset-window-heigh = { };
+    "Mod+Ctrl+R".action.reset-window-height = { };
     # Mod+F { maximize-column; }
     "Mod+F".action.maximize-column = { };
     # Mod+Shift+F { fullscreen-window; }
