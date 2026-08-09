@@ -24,8 +24,11 @@
     modules = [
       config.flake.modules.homeManager.niri
       config.flake.modules.homeManager.stylix
+      config.flake.modules.homeManager.vscode
       {
         crann.stylix.enable = true;
+        crann.vscode.enable = true;
+
         home.username = "test";
         home.homeDirectory = "/home/test";
         home.stateVersion = "26.05";
