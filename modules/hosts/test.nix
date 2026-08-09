@@ -23,7 +23,9 @@
     extraSpecialArgs = { inherit inputs; };
     modules = [
       config.flake.modules.homeManager.niri
+      config.flake.modules.homeManager.stylix
       {
+        crann.stylix.enable = true;
         home.username = "test";
         home.homeDirectory = "/home/test";
         home.stateVersion = "26.05";
@@ -38,55 +40,73 @@
       config.flake.modules.nixos.steam
       config.flake.modules.nixos.niri
       config.flake.modules.nixos.noctalia
+      config.flake.modules.nixos.stylix
       inputs.home-manager.nixosModules.home-manager
-      {
-        # --- system-level (nixos) modules under test ---
-        crann.steam.enable = true;
+      (
+        { pkgs, ... }:
+        {
+          # --- system-level (nixos) modules under test ---
+          crann.steam.enable = true;
 
-        # niri's system layer. This ALSO configures niri for home-manager users
-        # (it injects the settings options + crann's defaults via
-        # home-manager.sharedModules), so the test user below does NOT import
-        # flake.modules.homeManager.niri — doing both would double-declare
-        # programs.niri.*. The standalone home module is exercised separately by
-        # flake.homeConfigurations.test-home.
-        crann.niri.extraSettings = {
-          workspaces = {
-            "all" = { };
+          # stylix ships a default scheme/fonts/cursor, so enabling it is enough.
+          # extraSettings is merged last and overrides any crann default at the
+          # host level — here swapping the scheme and supplying the wallpaper the
+          # host wants (the image pass-through).
+          crann.stylix.enable = true;
+          crann.stylix.extraSettings = {
+            base16Scheme = "${pkgs.base16-schemes}/share/themes/material-vivid.yaml";
+            image = pkgs.fetchurl {
+              url = "https://raw.githubusercontent.com/jDmacD/wallpapers/refs/heads/main/3840x1600/moon_rise.jpg";
+              name = "moon_rise.jpg";
+              sha256 = "sha256-0xTBpjInGsSkhjnKNQ6ZYygCGLTsehZb+o1k9mD4sgU=";
+            };
           };
-        };
 
-        # --- home-manager integration ---
-        home-manager = {
-          useGlobalPkgs = true;
-          useUserPackages = true;
-          extraSpecialArgs = { inherit inputs; };
-          users.test = {
-            imports = [
-              config.flake.modules.homeManager.noctalia
+          # niri's system layer. This ALSO configures niri for home-manager users
+          # (it injects the settings options + crann's defaults via
+          # home-manager.sharedModules), so the test user below does NOT import
+          # flake.modules.homeManager.niri — doing both would double-declare
+          # programs.niri.*. The standalone home module is exercised separately by
+          # flake.homeConfigurations.test-home.
+          crann.niri.extraSettings = {
+            spawn-at-startup = [
+              { command = [ "noctalia" ]; }
             ];
-            home.stateVersion = "26.05";
           };
-        };
 
-        # --- throwaway host stubs so the system evaluates ---
-        nixpkgs.config.allowUnfree = true;
-        # Required by home-manager's xdg.portal under the NixOS module +
-        # useUserPackages (niri pulls in a portal); asserted otherwise.
-        environment.pathsToLink = [
-          "/share/applications"
-          "/share/xdg-desktop-portal"
-        ];
-        users.users.test = {
-          isNormalUser = true;
-          home = "/home/test";
-        };
-        boot.loader.grub.enable = false;
-        fileSystems."/" = {
-          device = "none";
-          fsType = "tmpfs";
-        };
-        system.stateVersion = "26.05";
-      }
+          # --- home-manager integration ---
+          home-manager = {
+            useGlobalPkgs = true;
+            useUserPackages = true;
+            extraSpecialArgs = { inherit inputs; };
+            users.test = {
+              imports = [
+                config.flake.modules.homeManager.noctalia
+              ];
+              home.stateVersion = "26.05";
+            };
+          };
+
+          # --- throwaway host stubs so the system evaluates ---
+          nixpkgs.config.allowUnfree = true;
+          # Required by home-manager's xdg.portal under the NixOS module +
+          # useUserPackages (niri pulls in a portal); asserted otherwise.
+          environment.pathsToLink = [
+            "/share/applications"
+            "/share/xdg-desktop-portal"
+          ];
+          users.users.test = {
+            isNormalUser = true;
+            home = "/home/test";
+          };
+          boot.loader.grub.enable = false;
+          fileSystems."/" = {
+            device = "none";
+            fsType = "tmpfs";
+          };
+          system.stateVersion = "26.05";
+        }
+      )
     ];
   };
 }
