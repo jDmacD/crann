@@ -52,6 +52,13 @@
           }
           cfg.extraSettings
         ];
+
+        # Icon glyphs (starship, eza --icons, vscode's terminal.integrated.fontFamily
+        # below) aren't part of any of stylix's four font categories — they're a
+        # symbols-only overlay resolved via per-glyph fontconfig fallback, not a
+        # primary UI font. Without this installed, apps that ask for codepoints in
+        # the Private Use Area just silently fall back to a font that lacks them.
+        home.packages = [ pkgs.nerd-fonts.symbols-only ];
       };
     };
 }
