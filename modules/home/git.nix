@@ -71,6 +71,12 @@
           default = true;
           description = "Whether to install the pre-commit framework.";
         };
+
+        commitizen.enable = lib.mkOption {
+          type = lib.types.bool;
+          default = true;
+          description = "Whether to install commitizen";
+        };
       };
 
       config = lib.mkIf cfg.enable {
@@ -99,7 +105,11 @@
 
         programs.lazygit.enable = lib.mkIf cfg.lazygit.enable true;
 
-        home.packages = lib.optional cfg.pre-commit.enable pkgs.pre-commit;
+        home.packages = lib.mkMerge [
+          (lib.mkIf cfg.pre-commit.enable [pkgs.pre-commit])
+          (lib.mkIf cfg.commitizen.enable [pkgs.commitizen])
+        ];
+
       };
     };
 }
