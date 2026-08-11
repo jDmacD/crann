@@ -59,6 +59,14 @@
         # primary UI font. Without this installed, apps that ask for codepoints in
         # the Private Use Area just silently fall back to a font that lacks them.
         home.packages = [ pkgs.nerd-fonts.symbols-only ];
+
+        # On standalone (non-NixOS) home-manager there is no system fontconfig
+        # pointing at the nix profile: distro fontconfig only scans
+        # /usr/share/fonts and $XDG_DATA_HOME/fonts, never ~/.nix-profile/share/fonts.
+        # Without this, every font installed above (including stylix's own
+        # defaults) sits unused in the profile and apps silently fall back to
+        # whatever distro fonts happen to already be on disk.
+        fonts.fontconfig.enable = true;
       };
     };
 }
