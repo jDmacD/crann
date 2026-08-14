@@ -5,9 +5,20 @@
   ],
   "lockFileMaintenance": {
     "enabled": true,
-    "extends": ["schedule:weekly"]
+    "extends": ["schedule:weekly"],
+    "automerge": true,
+    "automergeType": "pr",
+    "platformAutomerge": true
   },
   "nix": {
     "enabled": true
-  }
+  },
+  "packageRules": [
+    {
+      "matchManagers": ["nix"],
+      "automerge": true,
+      "automergeType": "pr",
+      "platformAutomerge": true
+    }
+  ]
 }
