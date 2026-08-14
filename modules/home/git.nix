@@ -106,8 +106,8 @@
         programs.lazygit.enable = lib.mkIf cfg.lazygit.enable true;
 
         home.packages = lib.mkMerge [
-          (lib.mkIf cfg.pre-commit.enable [pkgs.pre-commit])
-          (lib.mkIf cfg.commitizen.enable [pkgs.commitizen])
+          (lib.mkIf cfg.pre-commit.enable [ pkgs.pre-commit ])
+          (lib.mkIf cfg.commitizen.enable [ pkgs.commitizen ])
         ];
 
       };
