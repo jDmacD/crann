@@ -18,8 +18,8 @@
     };
     niri = {
       # url = "github:sodiboo/niri-flake";
-      url = "git+https://github.com/rebizzz/niri-flake.git?ref=fix/libdisplay-info-dep";
-      # inputs.nixpkgs.follows = "nixpkgs";
+      url = "github:epireyn/niri-flake";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
     noctalia = {
       url = "github:noctalia-dev/noctalia";
