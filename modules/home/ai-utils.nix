@@ -9,6 +9,32 @@
     }:
     let
       cfg = config.crann.ai-utils;
+
+      # Appended to programs.claude-code.context when claude-obsidian is
+      # enabled. Stays generic/portable (no vault path, no methodology mode)
+      # since those are per-vault choices, not something crann can assume for
+      # every consumer; the vault itself is discovered at runtime via
+      # .claude-obsidian.json / CLAUDE_OBSIDIAN_VAULT / current-directory
+      # discovery, per claude-obsidian's own compound-vault contract.
+      claudeObsidianContext = ''
+        ## claude-obsidian
+
+        This machine has the claude-obsidian plugin enabled for persistent
+        Obsidian-vault memory. When writing to a claude-obsidian vault
+        (resolved via `.claude-obsidian.json`, `CLAUDE_OBSIDIAN_VAULT`, or
+        workspace config), never use raw `Write`/`Edit` on files under a
+        vault's `wiki/`, `.vault-meta/`, or `inbox/` — always go through the
+        plugin's transaction core (`claude-obsidian.transaction.v1`: read
+        expected hashes, build a bundle, `transaction inspect` for a
+        dry-run, then `transaction apply` with the approved plan hash). A raw
+        write silently skips the vault's locking, hash verification, and
+        required coupled index/log/hot-cache updates.
+
+        Prefer invoking the relevant `claude-obsidian:*` skill (save,
+        wiki-ingest, wiki-query, wiki-mode, wiki-lint, ...) so its
+        instructions load into context before touching vault state, rather
+        than replaying the transaction pattern from memory alone.
+      '';
     in
     {
 
@@ -72,7 +98,12 @@
         programs.claude-code = {
           enable = cfg.claude-code.enable;
           package = cfg.claude-code.package;
-          context = lib.mkIf (cfg.claude-code.context != null) cfg.claude-code.context;
+          context = lib.mkIf (cfg.claude-code.context != null || cfg.claude-obsidian.enable) (
+            lib.concatStringsSep "\n---\n" (
+              lib.optional (cfg.claude-code.context != null) cfg.claude-code.context
+              ++ lib.optional cfg.claude-obsidian.enable claudeObsidianContext
+            )
+          );
           # List form, not the newer attrsOf form: home-manager.plugins' type
           # changed from listOf to either(attrsOf, listOf) partway through
           # 2026, and crann must stay portable to consumers pinned to either
