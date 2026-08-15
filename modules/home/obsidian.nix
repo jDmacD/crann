@@ -47,7 +47,7 @@
             { 
               technodrome = {
                 enable = true;
-                target = "../../spinner/technodrome";
+                target = "obsidian/technodrome";
               };
             }
             cfg.extraVaults
