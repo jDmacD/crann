@@ -101,6 +101,23 @@
         "type": "github"
       }
     },
+    "claude-obsidian": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1785585807,
+        "narHash": "sha256-anoMShck6PDaBkD2SBnZcD2teH8Cuk2lMvqKgYEj0MI=",
+        "owner": "AgriciDaniel",
+        "repo": "claude-obsidian",
+        "rev": "1c1bc49c03a685ee8f5d09c99efe52b42d6673f5",
+        "type": "github"
+      },
+      "original": {
+        "owner": "AgriciDaniel",
+        "repo": "claude-obsidian",
+        "rev": "1c1bc49c03a685ee8f5d09c99efe52b42d6673f5",
+        "type": "github"
+      }
+    },
     "firefox-gnome-theme": {
       "flake": false,
       "locked": {
@@ -483,6 +500,7 @@
     },
     "root": {
       "inputs": {
+        "claude-obsidian": "claude-obsidian",
         "flake-parts": "flake-parts",
         "home-manager": "home-manager",
         "import-tree": "import-tree",

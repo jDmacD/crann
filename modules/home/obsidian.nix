@@ -44,7 +44,7 @@
             cfg.extraSettings
           ];
           vaults = lib.mkMerge [
-            { 
+            {
               technodrome = {
                 enable = true;
                 target = "obsidian/technodrome";

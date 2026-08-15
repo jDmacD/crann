@@ -46,6 +46,7 @@
           crann.stylix.enable = true;
           crann.vscode.enable = true;
           crann.ai-utils.enable = true;
+          crann.ai-utils.claude-obsidian.enable = true;
 
           crann.shells.enable = true;
           crann.shells.flakeInspectPath = "/home/test/blueprint";

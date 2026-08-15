@@ -37,6 +37,10 @@
       url = "sourcehut:~watersucks/optnix?rev=d70527982f00bd40d3f49dedfa55cd2bfcceb38c";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    claude-obsidian = {
+      url = "github:AgriciDaniel/claude-obsidian?rev=1c1bc49c03a685ee8f5d09c99efe52b42d6673f5";
+      flake = false;
+    };
   };
 
   outputs = inputs: inputs.flake-parts.lib.mkFlake { inherit inputs; } (inputs.import-tree ./modules);
