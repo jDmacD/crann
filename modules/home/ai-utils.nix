@@ -68,7 +68,7 @@
           enable = cfg.claude-code.enable;
           package = cfg.claude-code.package;
           context = lib.mkIf (cfg.claude-code.context != null) cfg.claude-code.context;
-          plugins = lib.mkIf cfg.claude-obsidian.enable { claude-obsidian = cfg.claude-obsidian.source; };
+          plugins = lib.mkIf cfg.claude-obsidian.enable [ cfg.claude-obsidian.source ];
         };
 
         home.packages = lib.mkIf cfg.claude-obsidian.enable [ cfg.claude-obsidian.python.package ];
