@@ -477,6 +477,7 @@
       "original": {
         "owner": "~watersucks",
         "repo": "optnix",
+        "rev": "d70527982f00bd40d3f49dedfa55cd2bfcceb38c",
         "type": "sourcehut"
       }
     },
