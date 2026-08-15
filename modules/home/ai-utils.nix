@@ -32,6 +32,12 @@
             defaultText = lib.literalExpression "inputs.llm-agents.packages.\${system}.claude-code";
             description = "The claude-code package to use.";
           };
+
+          context = lib.mkOption {
+            type = lib.types.nullOr lib.types.lines;
+            default = null;
+            description = "Extra text passed through to programs.claude-code.context (e.g. machine- or network-specific notes). Unset by default so this module stays portable.";
+          };
         };
 
         claude-obsidian = {
@@ -61,6 +67,7 @@
         programs.claude-code = {
           enable = cfg.claude-code.enable;
           package = cfg.claude-code.package;
+          context = lib.mkIf (cfg.claude-code.context != null) cfg.claude-code.context;
           plugins = lib.mkIf cfg.claude-obsidian.enable { claude-obsidian = cfg.claude-obsidian.source; };
         };
 
