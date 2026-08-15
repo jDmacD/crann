@@ -44,7 +44,12 @@
             cfg.extraSettings
           ];
           vaults = lib.mkMerge [
-            { }
+            { 
+              technodrome = {
+                enable = true;
+                target = "../../spinner/technodrome"
+              };
+            }
             cfg.extraVaults
           ];
           cli.enable = true;
