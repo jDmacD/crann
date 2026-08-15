@@ -17,7 +17,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     niri = {
-      # url = "github:sodiboo/niri-flake";
+      # url = "github:sodiboo/niri-flake?rev=fe2febc4d7f7da05078676c1f062d1b182a4f2ad";
       url = "github:epireyn/niri-flake?rev=fe2febc4d7f7da05078676c1f062d1b182a4f2ad";
       inputs.nixpkgs.follows = "nixpkgs";
     };
@@ -34,7 +34,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     optnix = {
-      url = "sourcehut:~watersucks/optnix";
+      url = "sourcehut:~watersucks/optnix?rev=d70527982f00bd40d3f49dedfa55cd2bfcceb38c";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
