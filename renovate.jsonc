@@ -3,13 +3,13 @@
   "extends": [
     "config:recommended"
   ],
-  "lockFileMaintenance": {
-    "enabled": true,
-    "extends": ["schedule:weekly"],
-    "automerge": true,
-    "automergeType": "pr",
-    "platformAutomerge": true
-  },
+  // "lockFileMaintenance": {
+  //   "enabled": true,
+  //   "extends": ["schedule:weekly"],
+  //   "automerge": true,
+  //   "automergeType": "pr",
+  //   "platformAutomerge": true
+  // },
   "nix": {
     "enabled": true
   },
