@@ -90,7 +90,10 @@
         # programs.{{ name }} = {
         #   enable = cfg.{{ name }}.enable;
         #   package = cfg.{{ name }}.package;
-        #   settings = cfg.{{ name }}.extraSettings;
+        #   settings = lib.mkMerge [
+        #     { }
+        #     cfg.{{ name }}.extraSettings
+        #   ];
         # };
 
 {% elif type == 'nixos' %}
@@ -99,7 +102,10 @@
         # services.{{ name }} = {
         #   enable = cfg.enable;
         #   package = cfg.package;
-        #   settings = cfg.extraSettings;
+        #   settings = lib.mkMerge [
+        #     { }
+        #     cfg.extraSettings
+        #   ];
         # };
 
 {% endif %}
