@@ -37,15 +37,15 @@
       config = lib.mkIf cfg.enable {
 
         programs.obsidian = {
-          enable = cfg.obsidian.enable;
-          package = cfg.obsidian.package;
-          settings = lib.mkMerge [
+          enable = cfg.enable;
+          package = cfg.package;
+          defaultSettings = lib.mkMerge [
             { }
-            cfg.obsidian.extraSettings
+            cfg.extraSettings
           ];
           vaults = lib.mkMerge [
             { }
-            cfg.obsidian.extraVaults
+            cfg.extraVaults
           ];
           cli.enable = true;
         };
