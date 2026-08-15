@@ -36,6 +36,8 @@
       config.flake.modules.homeManager.git
       config.flake.modules.homeManager.kubernetes
       config.flake.modules.homeManager.desktop
+      config.flake.modules.homeManager.nix-utils
+      config.flake.modules.homeManager.optnix
       (
         { pkgs, ... }:
         {
@@ -57,6 +59,11 @@
           crann.kubernetes.extraPackages = [ pkgs.k3d ];
 
           crann.desktop.enable = true;
+
+          crann.nix-utils.enable = true;
+          crann.nix-utils.nh.flakePath = "/home/test/blueprint";
+
+          crann.optnix.enable = true;
 
           # Theming for the terminal module is surfaced here, on the host, not
           # baked into the module. Stylix autoEnables every target it knows
@@ -94,6 +101,7 @@
       config.flake.modules.nixos.desktop
       config.flake.modules.nixos.k3s
       config.flake.modules.nixos.k3s-nvidia
+      config.flake.modules.nixos.optnix
       inputs.home-manager.nixosModules.home-manager
       (
         { pkgs, ... }:
@@ -143,6 +151,8 @@
             ];
           };
 
+          crann.optnix.enable = true;
+
           # --- home-manager integration ---
           home-manager = {
             useGlobalPkgs = true;
@@ -156,6 +166,8 @@
                 config.flake.modules.homeManager.git
                 config.flake.modules.homeManager.kubernetes
                 config.flake.modules.homeManager.desktop
+                config.flake.modules.homeManager.nix-utils
+                config.flake.modules.homeManager.optnix
               ];
               # Same modules as test-home, exercised through the useGlobalPkgs
               # path this time.
@@ -164,6 +176,8 @@
               crann.terminal.enable = true;
               crann.kubernetes.enable = true;
               crann.desktop.enable = true;
+              crann.nix-utils.enable = true;
+              crann.optnix.enable = true;
               # Identity left unset here on purpose — exercises the nullable
               # userName/userEmail path, where crann emits no user.* at all.
               crann.git.enable = true;

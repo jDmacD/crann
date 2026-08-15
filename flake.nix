@@ -33,6 +33,10 @@
       url = "github:numtide/llm-agents.nix?rev=b4a645976fff76ef94dd60b7d4f9deaa216f40bd";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    optnix = {
+      url = "sourcehut:~watersucks/optnix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = inputs: inputs.flake-parts.lib.mkFlake { inherit inputs; } (inputs.import-tree ./modules);
