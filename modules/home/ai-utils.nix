@@ -47,9 +47,14 @@
             type = with lib.types; either package path;
             # claude-obsidian ships no flake.nix, so it's pulled in as a
             # flake=false input: a plain source tree, which is exactly what
-            # programs.claude-code.plugins entries accept.
-            default = inputs.claude-obsidian;
-            defaultText = lib.literalExpression "inputs.claude-obsidian";
+            # programs.claude-code.plugins entries accept. Use .outPath, not
+            # the input attrset itself — the attrset only coerces to a path
+            # via __toString/JSON serialization, which passed silently under
+            # nix eval --json but fails strict `types.path` checking on older
+            # nixpkgs pins (no isPath/isString match), throwing deep inside
+            # `system.build.toplevel` merge instead of here.
+            default = inputs.claude-obsidian.outPath;
+            defaultText = lib.literalExpression "inputs.claude-obsidian.outPath";
             description = "Source of the claude-obsidian plugin, linked into Claude Code via programs.claude-code.plugins.";
           };
 
@@ -68,7 +73,13 @@
           enable = cfg.claude-code.enable;
           package = cfg.claude-code.package;
           context = lib.mkIf (cfg.claude-code.context != null) cfg.claude-code.context;
-          plugins = lib.mkIf cfg.claude-obsidian.enable { claude-obsidian = cfg.claude-obsidian.source; };
+          # List form, not the newer attrsOf form: home-manager.plugins' type
+          # changed from listOf to either(attrsOf, listOf) partway through
+          # 2026, and crann must stay portable to consumers pinned to either
+          # side of that. The only cost of the list form is a cosmetic
+          # unstable-store-path-name warning on newer home-manager — the
+          # plugin still links and works.
+          plugins = lib.mkIf cfg.claude-obsidian.enable [ cfg.claude-obsidian.source ];
         };
 
         home.packages = lib.mkIf cfg.claude-obsidian.enable [
