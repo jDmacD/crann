@@ -92,12 +92,22 @@
       config.flake.modules.nixos.noctalia
       config.flake.modules.nixos.stylix
       config.flake.modules.nixos.desktop
+      config.flake.modules.nixos.k3s
+      config.flake.modules.nixos.k3s-nvidia
       inputs.home-manager.nixosModules.home-manager
       (
         { pkgs, ... }:
         {
           # --- system-level (nixos) modules under test ---
           crann.steam.enable = true;
+
+          # k3s + the GPU add-on. Role is "server" here purely so the test
+          # host doesn't also need a serverAddr; the GPU add-on's assertion
+          # (k3s-nvidia requires k3s.enable) is exercised regardless of role.
+          crann.k3s.enable = true;
+          crann.k3s.role = "server";
+          crann.k3s.tokenFile = "/run/secrets/k3s-token";
+          crann.k3s-nvidia.enable = true;
 
           # The nixos noctalia module contributes only the cachix substituter.
           crann.noctalia.cache.enable = true;
@@ -167,6 +177,9 @@
 
           # --- throwaway host stubs so the system evaluates ---
           nixpkgs.config.allowUnfree = true;
+          # This scaffold has no real GPU/driver config; suppress the
+          # upstream assertion that otherwise requires one.
+          hardware.nvidia-container-toolkit.suppressNvidiaDriverAssertion = true;
           # Required by home-manager's xdg.portal under the NixOS module +
           # useUserPackages (niri pulls in a portal); asserted otherwise.
           environment.pathsToLink = [
