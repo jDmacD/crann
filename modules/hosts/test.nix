@@ -38,6 +38,7 @@
       config.flake.modules.homeManager.desktop
       config.flake.modules.homeManager.nix-utils
       config.flake.modules.homeManager.optnix
+      config.flake.modules.homeManager.obsidian
       (
         { pkgs, ... }:
         {
@@ -64,6 +65,8 @@
           crann.nix-utils.nh.flakePath = "/home/test/blueprint";
 
           crann.optnix.enable = true;
+
+          crann.obsidian.enable = true;
 
           # Theming for the terminal module is surfaced here, on the host, not
           # baked into the module. Stylix autoEnables every target it knows
