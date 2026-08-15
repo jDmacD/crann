@@ -68,10 +68,19 @@
           enable = cfg.claude-code.enable;
           package = cfg.claude-code.package;
           context = lib.mkIf (cfg.claude-code.context != null) cfg.claude-code.context;
-          plugins = lib.mkIf cfg.claude-obsidian.enable [ cfg.claude-obsidian.source ];
+          plugins = lib.mkIf cfg.claude-obsidian.enable { claude-obsidian = cfg.claude-obsidian.source; };
         };
 
-        home.packages = lib.mkIf cfg.claude-obsidian.enable [ cfg.claude-obsidian.python.package ];
+        home.packages = lib.mkIf cfg.claude-obsidian.enable [
+          cfg.claude-obsidian.python.package
+          # The plugin is linked under a hash-named store path that moves on
+          # every rev bump, so expose the portable CLI under a stable name
+          # instead of making callers rediscover ~/.claude/skills/<hash>-.../
+          # scripts/claude-obsidian.py by hand.
+          (pkgs.writeShellScriptBin "claude-obsidian" ''
+            exec ${cfg.claude-obsidian.python.package}/bin/python3 ${cfg.claude-obsidian.source}/scripts/claude-obsidian.py "$@"
+          '')
+        ];
       };
     };
 }
