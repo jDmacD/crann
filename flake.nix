@@ -5,7 +5,7 @@
     flake-parts.url = "github:hercules-ci/flake-parts?rev=427bf4bd9435fdf21321c8cc628c24efc14c0f7a";
     import-tree.url = "github:vic/import-tree?rev=4ebb10ae17d5f1ad366e7aef5b92cb8eecf24f69";
 
-    multiverse.url = "github:fzakaria/nixpkgs-multiverse?rev=8891b2b13e649a13e5c5a254ff8e2eafd697d75d";
+    multiverse.url = "github:fzakaria/nixpkgs-multiverse?rev=4745826df4b3d554ea546d8a428767b790dd19da";
 
     treefmt-nix = {
       url = "github:numtide/treefmt-nix?rev=ae7910970dddc408fe6ab1c8e4b277bb21d72dc0";
@@ -13,7 +13,7 @@
     };
 
     home-manager = {
-      url = "github:nix-community/home-manager?rev=83b7606dcf44abe3a94b86e8bb2b3355d22e8797";
+      url = "github:nix-community/home-manager?rev=c8058ecc1329a71a3c99c4d0353dba4009a66152";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     niri = {
@@ -30,7 +30,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     llm-agents = {
-      url = "github:numtide/llm-agents.nix?rev=b4a645976fff76ef94dd60b7d4f9deaa216f40bd";
+      url = "github:numtide/llm-agents.nix?rev=dac632fe2759854b901cbab78efdeca6343a6c0e";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     optnix = {
