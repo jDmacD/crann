@@ -42,6 +42,18 @@
           git add "modules/nixos/$name.nix"
         '';
       };
+      # Builds the test host outputs (see modules/hosts/test.nix) and pushes
+      # the results to the jdmacd Cachix cache. Run from picard for the
+      # initial push, and by CI (see .github/workflows/check.yml) to keep it
+      # updated on every change.
+      push-cachix = pkgs.writeShellApplication {
+        name = "push-cachix";
+        runtimeInputs = [ pkgs.cachix ];
+        text = ''
+          nix build .#nixosConfigurations.test.config.system.build.toplevel --no-link --print-out-paths | cachix push jdmacd
+          nix build .#homeConfigurations.test-home.activationPackage --no-link --print-out-paths | cachix push jdmacd
+        '';
+      };
     in
     {
       devShells.default = pkgs.mkShell {
@@ -51,6 +63,7 @@
           pkgs.jinja2-cli
           new-homemanager
           new-nixos
+          push-cachix
         ];
       };
     };
