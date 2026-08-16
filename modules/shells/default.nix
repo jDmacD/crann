@@ -50,8 +50,8 @@
         name = "push-cachix";
         runtimeInputs = [ pkgs.cachix ];
         text = ''
-          nix build .#nixosConfigurations.test.config.system.build.toplevel --no-link --print-out-paths | cachix push jdmacd
-          nix build .#homeConfigurations.test-home.activationPackage --no-link --print-out-paths | cachix push jdmacd
+          nix build .#nixosConfigurations.test.config.system.build.toplevel --no-link --print-out-paths --accept-flake-config | cachix push jdmacd
+          nix build .#homeConfigurations.test-home.activationPackage --no-link --print-out-paths --accept-flake-config | cachix push jdmacd
         '';
       };
     in

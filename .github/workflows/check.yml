@@ -22,6 +22,6 @@ jobs:
           name: jdmacd
           authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
 
-      - run: nix flake check --all-systems
+      - run: nix flake check --all-systems --accept-flake-config
 
       - run: nix develop --command push-cachix
