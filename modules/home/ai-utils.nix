@@ -111,13 +111,12 @@
               ++ lib.optional cfg.claude-obsidian.enable claudeObsidianContext
             )
           );
-          # List form, not the newer attrsOf form: home-manager.plugins' type
-          # changed from listOf to either(attrsOf, listOf) partway through
-          # 2026, and crann must stay portable to consumers pinned to either
-          # side of that. The only cost of the list form is a cosmetic
-          # unstable-store-path-name warning on newer home-manager — the
-          # plugin still links and works.
-          plugins = lib.mkIf cfg.claude-obsidian.enable [ cfg.claude-obsidian.source ];
+          # Attrset form (requires home-manager's newer either(attrsOf, listOf)
+          # plugins type). Gives the plugin directory a stable name instead of
+          # the list form's hash-derived store path name.
+          plugins = lib.mkIf cfg.claude-obsidian.enable {
+            claude-obsidian = cfg.claude-obsidian.source;
+          };
         };
 
         home.packages =
