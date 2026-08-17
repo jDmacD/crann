@@ -60,6 +60,10 @@
           enable = cfg.nh.enable;
           flake = cfg.nh.flakePath;
           darwinFlake = cfg.nh.flakePath;
+          clean = {
+            enable = true;
+            extraArgs = "--keep-since 4d --keep 3";
+          };
         };
 
       };
