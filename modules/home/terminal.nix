@@ -28,6 +28,28 @@
       options.crann.terminal = {
         enable = lib.mkEnableOption "terminal";
 
+        packages = lib.mkOption {
+          type = lib.types.listOf lib.types.package;
+          default = with pkgs; [
+            libsixel
+            yq-go
+            jq
+            fd
+            fzf
+            bat
+            ripgrep
+          ];
+          defaultText = lib.literalExpression "[ pkgs.libsixel ]";
+          description = "The terminal tools to install. Replaces crann's default set.";
+        };
+
+        extraPackages = lib.mkOption {
+          type = lib.types.listOf lib.types.package;
+          default = [ ];
+          example = lib.literalExpression "[ pkgs.hello ]";
+          description = "Extra packages installed alongside `packages`.";
+        };
+
         # --- emulators ---
 
         ghostty = {
@@ -105,12 +127,6 @@
           type = lib.types.bool;
           default = true;
           description = "Whether to install and configure zoxide.";
-        };
-
-        sixel.enable = lib.mkOption {
-          type = lib.types.bool;
-          default = true;
-          description = "Whether to install libsixel (provides img2sixel).";
         };
 
         starship = {
@@ -234,7 +250,7 @@
           settings = cfg.zellij.extraSettings;
         };
 
-        home.packages = lib.optional cfg.sixel.enable pkgs.libsixel;
+        home.packages = cfg.packages ++ cfg.extraPackages;
       };
     };
 }
