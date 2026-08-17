@@ -33,7 +33,17 @@
 
         programs.noctalia = {
           enable = true;
-          settings = cfg.extraSettings;
+          settings = lib.mkMerge [
+            {
+              bar.default.start = [
+                "launcher"
+                "wallpaper"
+                "screenshot"
+                "workspaces"
+              ];
+            }
+            cfg.extraSettings
+          ];
         };
 
       };
