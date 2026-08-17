@@ -26,7 +26,10 @@
 
         packages = lib.mkOption {
           type = lib.types.listOf lib.types.package;
-          default = [ pkgs.wl-clipboard pkgs.scrcpy];
+          default = [
+            pkgs.wl-clipboard
+            pkgs.scrcpy
+          ];
           defaultText = lib.literalExpression "[ pkgs.wl-clipboard pkgs.scrcpy]";
           description = "The desktop userland tools to install. Replaces crann's default set.";
         };
