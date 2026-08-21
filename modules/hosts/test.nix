@@ -39,6 +39,7 @@
       config.flake.modules.homeManager.nix-utils
       config.flake.modules.homeManager.optnix
       config.flake.modules.homeManager.obsidian
+      config.flake.modules.homeManager.remote-builder
       (
         { pkgs, ... }:
         {
@@ -69,6 +70,15 @@
 
           crann.obsidian.enable = true;
 
+          crann.remote-builder.enable = true;
+          crann.remote-builder.machines = [
+            {
+              hostName = "builder.lan";
+              system = "aarch64-linux";
+              sshKey = "/run/secrets/builder_ed25519";
+            }
+          ];
+
           # Theming for the terminal module is surfaced here, on the host, not
           # baked into the module. Stylix autoEnables every target it knows
           # about; this is the seam where a host turns individual ones off.
@@ -89,6 +99,10 @@
           home.username = "test";
           home.homeDirectory = "/home/test";
           home.stateVersion = "26.05";
+          # Required by home-manager's own nix.settings module (imported by
+          # every home-manager config) to validate the generated nix.conf —
+          # unrelated to crann.remote-builder itself, just a fixture need.
+          nix.package = pkgs.nix;
         }
       )
     ];
@@ -107,6 +121,7 @@
       config.flake.modules.nixos.k3s
       config.flake.modules.nixos.k3s-nvidia
       config.flake.modules.nixos.optnix
+      config.flake.modules.nixos.remote-builder
       inputs.home-manager.nixosModules.home-manager
       (
         { pkgs, ... }:
@@ -159,6 +174,22 @@
           crann.optnix.enable = true;
 
           crann.gdm.enable = true;
+
+          # Both roles at once — exercises the composability the module is
+          # built for (a host can dispatch to remote builders and accept
+          # builds from its own trusted clients simultaneously).
+          crann.remote-builder.enable = true;
+          crann.remote-builder.machines = [
+            {
+              hostName = "builder.lan";
+              system = "aarch64-linux";
+              sshKey = "/run/secrets/builder_ed25519";
+            }
+          ];
+          crann.remote-builder.server.enable = true;
+          crann.remote-builder.server.authorizedKeys = [
+            "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDnim/f3xwmFw/DB9zeHtQSr9i2uKxwsiXkEgE2FdFcY test@test"
+          ];
 
           # --- home-manager integration ---
           home-manager = {
