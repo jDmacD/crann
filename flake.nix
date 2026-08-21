@@ -1,11 +1,11 @@
 {
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/0e251e24a4f24e036a084b6b4b2d2491af4167f4";
+    nixpkgs.url = "github:nixos/nixpkgs/79386e0686b21452da450490c7ac464ecf067cf1";
 
     flake-parts.url = "github:hercules-ci/flake-parts?rev=427bf4bd9435fdf21321c8cc628c24efc14c0f7a";
     import-tree.url = "github:vic/import-tree?rev=4ebb10ae17d5f1ad366e7aef5b92cb8eecf24f69";
 
-    multiverse.url = "github:fzakaria/nixpkgs-multiverse?rev=4745826df4b3d554ea546d8a428767b790dd19da";
+    multiverse.url = "github:fzakaria/nixpkgs-multiverse?rev=12dbab7efc581bd661e4f2d7e20ad28afb7cbb9c";
 
     treefmt-nix = {
       url = "github:numtide/treefmt-nix?rev=ae7910970dddc408fe6ab1c8e4b277bb21d72dc0";
@@ -13,24 +13,24 @@
     };
 
     home-manager = {
-      url = "github:nix-community/home-manager?rev=c8058ecc1329a71a3c99c4d0353dba4009a66152";
+      url = "github:nix-community/home-manager?rev=c53d643b3737e2fcd04e6cb3b3580ef50b2087a0";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     niri = {
-      # url = "github:sodiboo/niri-flake?rev=fe2febc4d7f7da05078676c1f062d1b182a4f2ad";
-      url = "github:epireyn/niri-flake?rev=fe2febc4d7f7da05078676c1f062d1b182a4f2ad";
+      # url = "github:sodiboo/niri-flake?rev=21777ada91b8b0d91a61c78294467eed232db936";
+      url = "github:epireyn/niri-flake?rev=840c81603e4c9e2befc984c2afc7f1f1e0b7a11c";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     noctalia = {
-      url = "github:noctalia-dev/noctalia?rev=b67cc05d3f5448e7b4f6e2da4b040ca789d565e8";
+      url = "github:noctalia-dev/noctalia?rev=791e557417ceeba0e57562af2ddcbd3d8b93f62a";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     stylix = {
-      url = "github:nix-community/stylix?rev=1e6ccadeda179d96728b4a9f20fc9d4dcf6b6059";
+      url = "github:nix-community/stylix?rev=a9e5a76a1b75b137f266e4f445e1eaba82e9783e";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     llm-agents = {
-      url = "github:numtide/llm-agents.nix?rev=dac632fe2759854b901cbab78efdeca6343a6c0e";
+      url = "github:numtide/llm-agents.nix?rev=0bedd15c76b9422a649b05e44b82666196e5246f";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     optnix = {
