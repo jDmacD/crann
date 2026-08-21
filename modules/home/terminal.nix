@@ -38,6 +38,7 @@
             fzf
             bat
             ripgrep
+            secretspec
           ];
           defaultText = lib.literalExpression "[ pkgs.libsixel ]";
           description = "The terminal tools to install. Replaces crann's default set.";
