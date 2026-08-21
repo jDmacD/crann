@@ -103,6 +103,7 @@
       config.flake.modules.nixos.noctalia
       config.flake.modules.nixos.stylix
       config.flake.modules.nixos.desktop
+      config.flake.modules.nixos.gdm
       config.flake.modules.nixos.k3s
       config.flake.modules.nixos.k3s-nvidia
       config.flake.modules.nixos.optnix
@@ -156,6 +157,8 @@
           };
 
           crann.optnix.enable = true;
+
+          crann.gdm.enable = true;
 
           # --- home-manager integration ---
           home-manager = {
