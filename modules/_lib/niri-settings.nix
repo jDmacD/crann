@@ -113,5 +113,58 @@
     "Mod+7".action.focus-workspace = 7;
     "Mod+8".action.focus-workspace = 8;
     "Mod+9".action.focus-workspace = 9;
+
+    # Hardware/media keys, ported from blueprint's hyprland.nix.
+    "XF86AudioRaiseVolume" = {
+      allow-when-locked = true;
+      action.spawn = [
+        "noctalia"
+        "msg"
+        "volume-up"
+      ];
+    };
+    "XF86AudioLowerVolume" = {
+      allow-when-locked = true;
+      action.spawn = [
+        "noctalia"
+        "msg"
+        "volume-down"
+      ];
+    };
+    "XF86AudioMute" = {
+      allow-when-locked = true;
+      action.spawn = [
+        "noctalia"
+        "msg"
+        "volume-mute"
+      ];
+    };
+    "XF86MonBrightnessUp" = {
+      allow-when-locked = true;
+      action.spawn = [
+        "noctalia"
+        "msg"
+        "brightness-up"
+      ];
+    };
+    "XF86MonBrightnessDown" = {
+      allow-when-locked = true;
+      action.spawn = [
+        "noctalia"
+        "msg"
+        "brightness-down"
+      ];
+    };
+    "Print".action.spawn = [
+      "noctalia"
+      "msg"
+      "screenshot-region"
+    ];
+    "Mod+Print".action.spawn = [
+      "noctalia"
+      "msg"
+      "screenshot-fullscreen"
+      "pick"
+    ];
   };
 }

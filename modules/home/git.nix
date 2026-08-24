@@ -47,6 +47,22 @@
           description = "Extra git settings merged over crann's defaults.";
         };
 
+        packages = lib.mkOption {
+          type = lib.types.listOf lib.types.package;
+          default = with pkgs; [
+            glab
+          ];
+          defaultText = lib.literalExpression "[ glab ]";
+          description = "The git tools to install. Replaces crann's default set.";
+        };
+
+        extraPackages = lib.mkOption {
+          type = lib.types.listOf lib.types.package;
+          default = [ ];
+          example = lib.literalExpression "[ pkgs.k3d ]";
+          description = "Extra packages installed alongside `packages`.";
+        };
+
         gh = {
           enable = lib.mkOption {
             type = lib.types.bool;
@@ -106,8 +122,10 @@
         programs.lazygit.enable = lib.mkIf cfg.lazygit.enable true;
 
         home.packages = lib.mkMerge [
-          (lib.mkIf cfg.pre-commit.enable [ pkgs.pre-commit ])
-          (lib.mkIf cfg.commitizen.enable [ pkgs.commitizen ])
+          (lib.mkIf cfg.pre-commit.enable [  pkgs.pre-commit  ])
+          (lib.mkIf cfg.commitizen.enable [  pkgs.commitizen  ])
+          cfg.packages
+          cfg.extraPackages
         ];
 
       };

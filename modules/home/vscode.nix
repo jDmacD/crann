@@ -45,6 +45,9 @@
                   workbench.colorTheme = "Stylix";
                   git.autofetch = true;
                   git.confirmSync = false;
+                  # per-user profile bin/activate is an unrelated ELF binary, not a venv script;
+                  # sourcing it in new terminals throws parse errors
+                  python.terminal.activateEnvironment = false;
                   sqltools.useNodeRuntime = false;
                   gitlab.keybindingHints.enabled = false;
                   gitlab.duoChat.enabled = false;

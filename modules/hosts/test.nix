@@ -36,6 +36,10 @@
       config.flake.modules.homeManager.git
       config.flake.modules.homeManager.kubernetes
       config.flake.modules.homeManager.desktop
+      config.flake.modules.homeManager.nix-utils
+      config.flake.modules.homeManager.optnix
+      config.flake.modules.homeManager.obsidian
+      config.flake.modules.homeManager.remote-builder
       (
         { pkgs, ... }:
         {
@@ -43,6 +47,7 @@
           crann.stylix.enable = true;
           crann.vscode.enable = true;
           crann.ai-utils.enable = true;
+          crann.ai-utils.claude-obsidian.enable = true;
 
           crann.shells.enable = true;
           crann.shells.flakeInspectPath = "/home/test/blueprint";
@@ -57,6 +62,22 @@
           crann.kubernetes.extraPackages = [ pkgs.k3d ];
 
           crann.desktop.enable = true;
+
+          crann.nix-utils.enable = true;
+          crann.nix-utils.nh.flakePath = "/home/test/blueprint";
+
+          crann.optnix.enable = true;
+
+          crann.obsidian.enable = true;
+
+          crann.remote-builder.enable = true;
+          crann.remote-builder.machines = [
+            {
+              hostName = "builder.lan";
+              system = "aarch64-linux";
+              sshKey = "/run/secrets/builder_ed25519";
+            }
+          ];
 
           # Theming for the terminal module is surfaced here, on the host, not
           # baked into the module. Stylix autoEnables every target it knows
@@ -78,6 +99,10 @@
           home.username = "test";
           home.homeDirectory = "/home/test";
           home.stateVersion = "26.05";
+          # Required by home-manager's own nix.settings module (imported by
+          # every home-manager config) to validate the generated nix.conf —
+          # unrelated to crann.remote-builder itself, just a fixture need.
+          nix.package = pkgs.nix;
         }
       )
     ];
@@ -92,12 +117,25 @@
       config.flake.modules.nixos.noctalia
       config.flake.modules.nixos.stylix
       config.flake.modules.nixos.desktop
+      config.flake.modules.nixos.gdm
+      config.flake.modules.nixos.k3s
+      config.flake.modules.nixos.k3s-nvidia
+      config.flake.modules.nixos.optnix
+      config.flake.modules.nixos.remote-builder
       inputs.home-manager.nixosModules.home-manager
       (
         { pkgs, ... }:
         {
           # --- system-level (nixos) modules under test ---
           crann.steam.enable = true;
+
+          # k3s + the GPU add-on. Role is "server" here purely so the test
+          # host doesn't also need a serverAddr; the GPU add-on's assertion
+          # (k3s-nvidia requires k3s.enable) is exercised regardless of role.
+          crann.k3s.enable = true;
+          crann.k3s.role = "server";
+          crann.k3s.tokenFile = "/run/secrets/k3s-token";
+          crann.k3s-nvidia.enable = true;
 
           # The nixos noctalia module contributes only the cachix substituter.
           crann.noctalia.cache.enable = true;
@@ -133,6 +171,26 @@
             ];
           };
 
+          crann.optnix.enable = true;
+
+          crann.gdm.enable = true;
+
+          # Both roles at once — exercises the composability the module is
+          # built for (a host can dispatch to remote builders and accept
+          # builds from its own trusted clients simultaneously).
+          crann.remote-builder.enable = true;
+          crann.remote-builder.machines = [
+            {
+              hostName = "builder.lan";
+              system = "aarch64-linux";
+              sshKey = "/run/secrets/builder_ed25519";
+            }
+          ];
+          crann.remote-builder.server.enable = true;
+          crann.remote-builder.server.authorizedKeys = [
+            "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDnim/f3xwmFw/DB9zeHtQSr9i2uKxwsiXkEgE2FdFcY test@test"
+          ];
+
           # --- home-manager integration ---
           home-manager = {
             useGlobalPkgs = true;
@@ -146,6 +204,8 @@
                 config.flake.modules.homeManager.git
                 config.flake.modules.homeManager.kubernetes
                 config.flake.modules.homeManager.desktop
+                config.flake.modules.homeManager.nix-utils
+                config.flake.modules.homeManager.optnix
               ];
               # Same modules as test-home, exercised through the useGlobalPkgs
               # path this time.
@@ -154,6 +214,8 @@
               crann.terminal.enable = true;
               crann.kubernetes.enable = true;
               crann.desktop.enable = true;
+              crann.nix-utils.enable = true;
+              crann.optnix.enable = true;
               # Identity left unset here on purpose — exercises the nullable
               # userName/userEmail path, where crann emits no user.* at all.
               crann.git.enable = true;
@@ -167,6 +229,9 @@
 
           # --- throwaway host stubs so the system evaluates ---
           nixpkgs.config.allowUnfree = true;
+          # This scaffold has no real GPU/driver config; suppress the
+          # upstream assertion that otherwise requires one.
+          hardware.nvidia-container-toolkit.suppressNvidiaDriverAssertion = true;
           # Required by home-manager's xdg.portal under the NixOS module +
           # useUserPackages (niri pulls in a portal); asserted otherwise.
           environment.pathsToLink = [
