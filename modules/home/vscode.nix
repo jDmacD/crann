@@ -1,4 +1,3 @@
-{ inputs, ... }:
 {
   flake.modules.homeManager.vscode =
     {
@@ -17,7 +16,6 @@
         package = lib.mkOption {
           type = lib.types.package;
           default = pkgs.vscode;
-          # default = inputs.someflake.packages.${pkgs.stdenv.hostPlatform.system}.default;
           defaultText = lib.literalExpression "pkgs.vscode";
           description = "The vscode package to use.";
         };
