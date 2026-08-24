@@ -122,6 +122,7 @@
       config.flake.modules.nixos.k3s-nvidia
       config.flake.modules.nixos.optnix
       config.flake.modules.nixos.remote-builder
+      config.flake.modules.nixos.builder-user
       inputs.home-manager.nixosModules.home-manager
       (
         { pkgs, ... }:
@@ -188,6 +189,11 @@
           ];
           crann.remote-builder.server.enable = true;
           crann.remote-builder.server.authorizedKeys = [
+            "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDnim/f3xwmFw/DB9zeHtQSr9i2uKxwsiXkEgE2FdFcY test@test"
+          ];
+
+          crann.builder-user.enable = true;
+          crann.builder-user.authorizedKeys = [
             "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDnim/f3xwmFw/DB9zeHtQSr9i2uKxwsiXkEgE2FdFcY test@test"
           ];
 
