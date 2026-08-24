@@ -1,11 +1,11 @@
 {
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/0e251e24a4f24e036a084b6b4b2d2491af4167f4";
+    nixpkgs.url = "github:nixos/nixpkgs/79386e0686b21452da450490c7ac464ecf067cf1";
 
     flake-parts.url = "github:hercules-ci/flake-parts?rev=427bf4bd9435fdf21321c8cc628c24efc14c0f7a";
     import-tree.url = "github:vic/import-tree?rev=4ebb10ae17d5f1ad366e7aef5b92cb8eecf24f69";
 
-    multiverse.url = "github:fzakaria/nixpkgs-multiverse?rev=4745826df4b3d554ea546d8a428767b790dd19da";
+    multiverse.url = "github:fzakaria/nixpkgs-multiverse?rev=3a78aabd6d442ae61592b295a3e8914b108a88d0";
 
     treefmt-nix = {
       url = "github:numtide/treefmt-nix?rev=ae7910970dddc408fe6ab1c8e4b277bb21d72dc0";
@@ -13,24 +13,24 @@
     };
 
     home-manager = {
-      url = "github:nix-community/home-manager?rev=aac4965ddb7ea2ff0f3cadd9502c7042b7aa07ba";
+      url = "github:nix-community/home-manager?rev=cfba7ad5886b342b8dd63ba74354b3853ea4cfc9";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     niri = {
       # url = "github:sodiboo/niri-flake?rev=21777ada91b8b0d91a61c78294467eed232db936";
-      url = "github:epireyn/niri-flake?rev=fe2febc4d7f7da05078676c1f062d1b182a4f2ad";
+      url = "github:epireyn/niri-flake?rev=5cf28562b112426ecac764300ee409e736a7e069";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     noctalia = {
-      url = "github:noctalia-dev/noctalia?rev=b67cc05d3f5448e7b4f6e2da4b040ca789d565e8";
+      url = "github:noctalia-dev/noctalia?rev=7fd9f7bfa9604022b9de311b30a3da0c2c4415de";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     stylix = {
-      url = "github:nix-community/stylix?rev=1e6ccadeda179d96728b4a9f20fc9d4dcf6b6059";
+      url = "github:nix-community/stylix?rev=a9e5a76a1b75b137f266e4f445e1eaba82e9783e";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     llm-agents = {
-      url = "github:numtide/llm-agents.nix?rev=dac632fe2759854b901cbab78efdeca6343a6c0e";
+      url = "github:numtide/llm-agents.nix?rev=5fae6955fa522382e640b65876fb2f456059f4c2";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     optnix = {
