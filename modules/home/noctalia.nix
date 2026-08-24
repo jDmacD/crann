@@ -17,6 +17,17 @@
         inputs.noctalia.homeModules.default
       ];
 
+      # home-manager gained its own modules/programs/noctalia.nix upstream, which
+      # declares the same `programs.noctalia.*` options as noctalia's flake module
+      # above — two declarations of one option namespace is a hard eval error
+      # ("already declared in ..."), not a merge. Disable home-manager's copy and
+      # keep noctalia's: theirs is versioned with the shell itself, and its
+      # `package` default is the flake's pinned revision, whereas home-manager's
+      # is `mkPackageOption pkgs "noctalia"` — i.e. whatever nixpkgs happens to
+      # carry, which is not what this module's `settings` are written against.
+      # Path is relative to home-manager's own module root, not this file.
+      disabledModules = [ "programs/noctalia.nix" ];
+
       options.crann.noctalia = {
 
         enable = lib.mkEnableOption "the noctalia shell";
