@@ -2,7 +2,7 @@
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/79386e0686b21452da450490c7ac464ecf067cf1";
 
-    flake-parts.url = "github:hercules-ci/flake-parts?rev=427bf4bd9435fdf21321c8cc628c24efc14c0f7a";
+    flake-parts.url = "github:hercules-ci/flake-parts?rev=9d0d87172c374f89da73c1cfe6d81ae62feac1f1";
     import-tree.url = "github:vic/import-tree?rev=4ebb10ae17d5f1ad366e7aef5b92cb8eecf24f69";
 
     multiverse.url = "github:fzakaria/nixpkgs-multiverse?rev=3a78aabd6d442ae61592b295a3e8914b108a88d0";
@@ -13,7 +13,7 @@
     };
 
     home-manager = {
-      url = "github:nix-community/home-manager?rev=cfba7ad5886b342b8dd63ba74354b3853ea4cfc9";
+      url = "github:nix-community/home-manager?rev=6840c9a8f50722944eb106ce8bb237c138584f2a";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     niri = {
@@ -38,7 +38,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     claude-obsidian = {
-      url = "github:AgriciDaniel/claude-obsidian?rev=1c1bc49c03a685ee8f5d09c99efe52b42d6673f5";
+      url = "github:AgriciDaniel/claude-obsidian?rev=9f8c1199047eac2c3828496279fbb7ba9540b90b";
       flake = false;
     };
   };

@@ -104,17 +104,17 @@
     "claude-obsidian": {
       "flake": false,
       "locked": {
-        "lastModified": 1785585807,
-        "narHash": "sha256-anoMShck6PDaBkD2SBnZcD2teH8Cuk2lMvqKgYEj0MI=",
+        "lastModified": 1787700636,
+        "narHash": "sha256-+AtcgK6MZnb0mmOF4syPjnADjigSTGytU/WQ3EL/zc4=",
         "owner": "AgriciDaniel",
         "repo": "claude-obsidian",
-        "rev": "1c1bc49c03a685ee8f5d09c99efe52b42d6673f5",
+        "rev": "9f8c1199047eac2c3828496279fbb7ba9540b90b",
         "type": "github"
       },
       "original": {
         "owner": "AgriciDaniel",
         "repo": "claude-obsidian",
-        "rev": "1c1bc49c03a685ee8f5d09c99efe52b42d6673f5",
+        "rev": "9f8c1199047eac2c3828496279fbb7ba9540b90b",
         "type": "github"
       }
     },
@@ -155,17 +155,17 @@
         "nixpkgs-lib": "nixpkgs-lib"
       },
       "locked": {
-        "lastModified": 1785627969,
-        "narHash": "sha256-4dtXQk/NMePegK/nWp5NSeuZKLATItOq61lpEvmXqGw=",
+        "lastModified": 1787559586,
+        "narHash": "sha256-onL0VLf9vPllmT0H/OlURIU5r5t5WIEl7t4tVNKT0Nw=",
         "owner": "hercules-ci",
         "repo": "flake-parts",
-        "rev": "427bf4bd9435fdf21321c8cc628c24efc14c0f7a",
+        "rev": "9d0d87172c374f89da73c1cfe6d81ae62feac1f1",
         "type": "github"
       },
       "original": {
         "owner": "hercules-ci",
         "repo": "flake-parts",
-        "rev": "427bf4bd9435fdf21321c8cc628c24efc14c0f7a",
+        "rev": "9d0d87172c374f89da73c1cfe6d81ae62feac1f1",
         "type": "github"
       }
     },
@@ -253,17 +253,17 @@
         ]
       },
       "locked": {
-        "lastModified": 1787487906,
-        "narHash": "sha256-zIdM+8teujHm5hc5MIPDnV7k2UeOOT/pFyFtWjOCwsY=",
+        "lastModified": 1787680808,
+        "narHash": "sha256-9168tNt0NZdtlx5RM5huEuc9NCWMLACJA9O4UK/l2Zc=",
         "owner": "nix-community",
         "repo": "home-manager",
-        "rev": "cfba7ad5886b342b8dd63ba74354b3853ea4cfc9",
+        "rev": "6840c9a8f50722944eb106ce8bb237c138584f2a",
         "type": "github"
       },
       "original": {
         "owner": "nix-community",
         "repo": "home-manager",
-        "rev": "cfba7ad5886b342b8dd63ba74354b3853ea4cfc9",
+        "rev": "6840c9a8f50722944eb106ce8bb237c138584f2a",
         "type": "github"
       }
     },
