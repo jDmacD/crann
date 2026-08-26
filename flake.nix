@@ -38,7 +38,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     claude-obsidian = {
-      url = "github:AgriciDaniel/claude-obsidian?rev=1c1bc49c03a685ee8f5d09c99efe52b42d6673f5";
+      url = "github:AgriciDaniel/claude-obsidian?rev=9f8c1199047eac2c3828496279fbb7ba9540b90b";
       flake = false;
     };
   };
