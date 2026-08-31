@@ -3,7 +3,7 @@
     nixpkgs.url = "github:nixos/nixpkgs/79386e0686b21452da450490c7ac464ecf067cf1";
 
     flake-parts.url = "github:hercules-ci/flake-parts?rev=9d0d87172c374f89da73c1cfe6d81ae62feac1f1";
-    import-tree.url = "github:vic/import-tree?rev=4ebb10ae17d5f1ad366e7aef5b92cb8eecf24f69";
+    import-tree.url = "github:vic/import-tree?rev=8961e2418a12a71e08943c9f3d8cf6dbbc3cd172";
 
     multiverse.url = "github:fzakaria/nixpkgs-multiverse?rev=25b80f6630c67de61613a6e1d461929b01f63a47";
 
