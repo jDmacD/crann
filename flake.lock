@@ -310,17 +310,17 @@
     },
     "multiverse": {
       "locked": {
-        "lastModified": 1788216404,
-        "narHash": "sha256-bPALsjeEJYajQN+jXK3vT0TSxyCF+LwShJgUNarN+go=",
+        "lastModified": 1788370760,
+        "narHash": "sha256-ww7DuR4T0+gjSZfJ2IGRGOhqoPrMpaomlriLhjxl9xI=",
         "owner": "fzakaria",
         "repo": "nixpkgs-multiverse",
-        "rev": "4e42650d06172b925d85b134fb924ae6d109cf60",
+        "rev": "7bb0014f8bd3cdd19252e089cde4f1847c0c9e60",
         "type": "github"
       },
       "original": {
         "owner": "fzakaria",
         "repo": "nixpkgs-multiverse",
-        "rev": "4e42650d06172b925d85b134fb924ae6d109cf60",
+        "rev": "7bb0014f8bd3cdd19252e089cde4f1847c0c9e60",
         "type": "github"
       }
     },
