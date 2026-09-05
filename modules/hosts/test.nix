@@ -40,6 +40,7 @@
       config.flake.modules.homeManager.optnix
       config.flake.modules.homeManager.obsidian
       config.flake.modules.homeManager.remote-builder
+      config.flake.modules.homeManager.yazi
       (
         { pkgs, ... }:
         {
@@ -78,6 +79,8 @@
               sshKey = "/run/secrets/builder_ed25519";
             }
           ];
+
+          crann.yazi.enable = true;
 
           # Theming for the terminal module is surfaced here, on the host, not
           # baked into the module. Stylix autoEnables every target it knows
@@ -122,6 +125,7 @@
       config.flake.modules.nixos.k3s-nvidia
       config.flake.modules.nixos.optnix
       config.flake.modules.nixos.remote-builder
+      config.flake.modules.nixos.thunar
       inputs.home-manager.nixosModules.home-manager
       (
         { pkgs, ... }:
@@ -143,6 +147,8 @@
           # audio / bluetooth / upower / gvfs. Note this is the *nixos* class
           # `crann.desktop`; the home class has its own, set on the user below.
           crann.desktop.enable = true;
+
+          crann.thunar.enable = true;
 
           # stylix ships a default scheme/fonts/cursor, so enabling it is enough.
           # extraSettings is merged last and overrides any crann default at the
