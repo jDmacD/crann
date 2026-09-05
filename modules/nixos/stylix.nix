@@ -46,24 +46,26 @@
         };
       };
 
-      config = lib.mkIf cfg.enable (lib.mkMerge [
-        {
-          stylix = lib.mkMerge [
-            (lib.mkDefault defaults)
-            { enable = true; }
-            cfg.extraSettings
-          ];
-        }
-        # Only when the host actually uses the home-manager NixOS module —
-        # otherwise the `home-manager.*` options don't exist and this would
-        # error.
-        (lib.optionalAttrs (options ? home-manager) {
-          home-manager.sharedModules = [
-            {
-              home.packages = [ pkgs.nerd-fonts.symbols-only ];
-            }
-          ];
-        })
-      ]);
+      config = lib.mkIf cfg.enable (
+        lib.mkMerge [
+          {
+            stylix = lib.mkMerge [
+              (lib.mkDefault defaults)
+              { enable = true; }
+              cfg.extraSettings
+            ];
+          }
+          # Only when the host actually uses the home-manager NixOS module —
+          # otherwise the `home-manager.*` options don't exist and this would
+          # error.
+          (lib.optionalAttrs (options ? home-manager) {
+            home-manager.sharedModules = [
+              {
+                home.packages = [ pkgs.nerd-fonts.symbols-only ];
+              }
+            ];
+          })
+        ]
+      );
     };
 }
