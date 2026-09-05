@@ -9,7 +9,14 @@
 # When enabled, stylix's nixosModule auto-injects stylix's home-manager module
 # into every home-manager user, which is what makes `stylix.targets.niri.enable`
 # (declared by niri-flake's injected home stylix.nix) resolve. So no manual
-# home-manager.sharedModules injection is needed here.
+# home-manager.sharedModules injection is needed here for stylix's own options.
+#
+# One exception: the Nerd Font symbols-only fallback (see
+# modules/home/stylix.nix for why it's needed — icon glyphs like eza --icons
+# and starship live in the Private Use Area, outside stylix's four font
+# categories). The home-manager-class stylix module installs it directly, but
+# NixOS hosts must not import that module (it'd double-declare `stylix.*`
+# options via the auto-injection above), so it has to be injected here instead.
 { inputs, ... }:
 {
   flake.modules.nixos.stylix =
@@ -17,6 +24,7 @@
       pkgs,
       lib,
       config,
+      options,
       ...
     }:
     let
@@ -38,12 +46,24 @@
         };
       };
 
-      config = lib.mkIf cfg.enable {
-        stylix = lib.mkMerge [
-          (lib.mkDefault defaults)
-          { enable = true; }
-          cfg.extraSettings
-        ];
-      };
+      config = lib.mkIf cfg.enable (lib.mkMerge [
+        {
+          stylix = lib.mkMerge [
+            (lib.mkDefault defaults)
+            { enable = true; }
+            cfg.extraSettings
+          ];
+        }
+        # Only when the host actually uses the home-manager NixOS module —
+        # otherwise the `home-manager.*` options don't exist and this would
+        # error.
+        (lib.optionalAttrs (options ? home-manager) {
+          home-manager.sharedModules = [
+            {
+              home.packages = [ pkgs.nerd-fonts.symbols-only ];
+            }
+          ];
+        })
+      ]);
     };
 }
