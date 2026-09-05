@@ -5,6 +5,18 @@
 # already sets `programs.xfconf.enable` unconditionally, so — unlike what the
 # NixOS wiki's Thunar page still says to add by hand for a non-Xfce
 # compositor — nothing extra is needed here to persist preferences on niri.
+#
+# setAsDefaultFileManager also flips `xdg.mimeApps.enable` on, not just
+# `defaultApplications` — home-manager's xdg.mimeApps module only manages
+# (and thus only writes) $XDG_CONFIG_HOME/mimeapps.list once `enable` is
+# true; `defaultApplications` alone is silently inert. Once enabled, that
+# file becomes a read-only nix-store symlink covering *every* MIME
+# association on the host, not just this one, so a consumer that already
+# relies on apps self-registering their own defaults into a mutable
+# mimeapps.list (browsers, other URL-scheme handlers) needs to declare
+# those associations explicitly from here on — see blueprint's
+# nix/modules/home/firefox.nix and home-shared.nix for the ones this
+# surfaced in practice.
 { ... }:
 {
   flake.modules.nixos.thunar =
@@ -63,7 +75,10 @@
           (lib.optionalAttrs (options ? home-manager) {
             home-manager.sharedModules = lib.mkIf cfg.setAsDefaultFileManager [
               {
-                xdg.mimeApps.defaultApplications."inode/directory" = [ "thunar.desktop" ];
+                xdg.mimeApps = {
+                  enable = true;
+                  defaultApplications."inode/directory" = [ "thunar.desktop" ];
+                };
               }
             ];
           })
