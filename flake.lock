@@ -105,17 +105,17 @@
     "claude-obsidian": {
       "flake": false,
       "locked": {
-        "lastModified": 1787744598,
-        "narHash": "sha256-zPwJAhqelvQqOjMxJvydKeabY+UASBQvkjxZvUNdtl8=",
+        "lastModified": 1789051744,
+        "narHash": "sha256-GwVTOKtbSUOKYgpx7LZSIRNqw8EL3/PsPK4ucOsyRu4=",
         "owner": "AgriciDaniel",
         "repo": "claude-obsidian",
-        "rev": "ad67087cad22ad84cc3288f915588ae42c0c2b44",
+        "rev": "32ac5a02c4e082e4a5628ca810776375e134708e",
         "type": "github"
       },
       "original": {
         "owner": "AgriciDaniel",
         "repo": "claude-obsidian",
-        "rev": "ad67087cad22ad84cc3288f915588ae42c0c2b44",
+        "rev": "32ac5a02c4e082e4a5628ca810776375e134708e",
         "type": "github"
       }
     },
