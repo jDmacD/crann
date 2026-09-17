@@ -22,7 +22,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     noctalia = {
-      url = "github:noctalia-dev/noctalia?rev=e4eb0ff97743c1d07d0f5a0d5770b277b6485b03";
+      url = "github:noctalia-dev/noctalia?rev=8c52cb71b5bcafbf67bfb8e659f1fc45f882a008";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     stylix = {
