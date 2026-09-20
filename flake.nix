@@ -26,7 +26,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     stylix = {
-      url = "github:nix-community/stylix?rev=5e3809851f486e7fc7e84b40f174c74b60ecc784";
+      url = "github:nix-community/stylix?rev=5b298f723fe6c82aa294380545d6f559d5ab4534";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     llm-agents = {
