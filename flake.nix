@@ -29,10 +29,12 @@
       url = "github:nix-community/stylix?rev=abff36bfab11cbdcd0723f41c1b0921e211be6ac";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    llm-agents = {
-      url = "github:numtide/llm-agents.nix?rev=cbfe11b1e27e0bfde1ce9f221fcc9c88940f0602";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    # Deliberately does NOT follow nixpkgs. llm-agents ships its own pinned
+    # nixpkgs and publishes to cache.numtide.com; overriding it evaluates their
+    # whole `packages` set against our pin, and any package needing something we
+    # don't have (e.g. t3code wanting electron_44) takes claude-code down with
+    # it. Same rationale as the niri input above.
+    llm-agents.url = "github:numtide/llm-agents.nix?rev=f01ba915dc33c18a683dd13ea00c93ada411947e";
     optnix = {
       url = "sourcehut:~watersucks/optnix?rev=d70527982f00bd40d3f49dedfa55cd2bfcceb38c";
       inputs.nixpkgs.follows = "nixpkgs";

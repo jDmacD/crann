@@ -288,24 +288,22 @@
       "inputs": {
         "bun2nix": "bun2nix",
         "flake-parts": "flake-parts_2",
-        "nixpkgs": [
-          "nixpkgs"
-        ],
+        "nixpkgs": "nixpkgs",
         "systems": "systems",
         "treefmt-nix": "treefmt-nix"
       },
       "locked": {
-        "lastModified": 1789552626,
-        "narHash": "sha256-uLUOUASz1t+YvEu6e1l71d/5eTnWC7psI+rRxTpj514=",
+        "lastModified": 1789993546,
+        "narHash": "sha256-ZCADbHaFMVYjiHbf33whnKIklF/1PmcC5hL5aQCI6tA=",
         "owner": "numtide",
         "repo": "llm-agents.nix",
-        "rev": "cbfe11b1e27e0bfde1ce9f221fcc9c88940f0602",
+        "rev": "f01ba915dc33c18a683dd13ea00c93ada411947e",
         "type": "github"
       },
       "original": {
         "owner": "numtide",
         "repo": "llm-agents.nix",
-        "rev": "cbfe11b1e27e0bfde1ce9f221fcc9c88940f0602",
+        "rev": "f01ba915dc33c18a683dd13ea00c93ada411947e",
         "type": "github"
       }
     },
@@ -386,17 +384,17 @@
     },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1789984114,
-        "narHash": "sha256-E4xIDn4vB0LQYcIvUmU1fgZJj5U51IDV/7JmgG9ktJQ=",
-        "owner": "nixos",
+        "lastModified": 1789813231,
+        "narHash": "sha256-dsU+UU4X3ND95E/O6Z33qK5jPxIeB/7akn/+NfAk+nY=",
+        "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "00266915b167c70a0d4bc1641e45dbdd2a2c1b16",
+        "rev": "c80073788adf88abfdc443465311f00e7a231600",
         "type": "github"
       },
       "original": {
-        "owner": "nixos",
+        "owner": "NixOS",
+        "ref": "nixpkgs-unstable",
         "repo": "nixpkgs",
-        "rev": "00266915b167c70a0d4bc1641e45dbdd2a2c1b16",
         "type": "github"
       }
     },
@@ -428,6 +426,22 @@
         "owner": "NixOS",
         "ref": "nixos-26.05",
         "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "nixpkgs_2": {
+      "locked": {
+        "lastModified": 1789984114,
+        "narHash": "sha256-E4xIDn4vB0LQYcIvUmU1fgZJj5U51IDV/7JmgG9ktJQ=",
+        "owner": "nixos",
+        "repo": "nixpkgs",
+        "rev": "00266915b167c70a0d4bc1641e45dbdd2a2c1b16",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nixos",
+        "repo": "nixpkgs",
+        "rev": "00266915b167c70a0d4bc1641e45dbdd2a2c1b16",
         "type": "github"
       }
     },
@@ -508,7 +522,7 @@
         "llm-agents": "llm-agents",
         "multiverse": "multiverse",
         "niri": "niri",
-        "nixpkgs": "nixpkgs",
+        "nixpkgs": "nixpkgs_2",
         "noctalia": "noctalia",
         "optnix": "optnix",
         "stylix": "stylix",
