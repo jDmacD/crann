@@ -5,7 +5,7 @@
     flake-parts.url = "github:hercules-ci/flake-parts?rev=31729ca8cbdb4fa927b34e5f4353e6a83f39e993";
     import-tree.url = "github:vic/import-tree?rev=eb1b52eaecc57f7c136d07ae8a93e724dfecac46";
 
-    multiverse.url = "github:fzakaria/nixpkgs-multiverse?rev=3349cfa5aa11ec4a66044088b87b37a6f9355af0";
+    multiverse.url = "github:fzakaria/nixpkgs-multiverse?rev=7f14c10bf60376f830f07465be74b1059015b453";
 
     treefmt-nix = {
       url = "github:numtide/treefmt-nix?rev=ae7910970dddc408fe6ab1c8e4b277bb21d72dc0";
