@@ -39,6 +39,8 @@
             bat
             ripgrep
             secretspec
+            bitwarden-cli
+            bws
           ];
           defaultText = lib.literalExpression "[ pkgs.libsixel ]";
           description = "The terminal tools to install. Replaces crann's default set.";
