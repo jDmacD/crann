@@ -73,6 +73,46 @@
           };
         };
 
+        mcp.grafana = {
+          enable = lib.mkEnableOption "the official Grafana MCP server (grafana/mcp-grafana) for Claude Code";
+
+          package = lib.mkPackageOption pkgs "mcp-grafana" { };
+
+          url = lib.mkOption {
+            type = lib.types.str;
+            example = "https://grafana.example.com";
+            description = "Base URL of the Grafana instance (GRAFANA_URL).";
+          };
+
+          tokenFile = lib.mkOption {
+            type = lib.types.nullOr lib.types.str;
+            default = null;
+            example = "/run/user/1000/secrets/grafana_mcp_token";
+            description = ''
+              Path to a file holding a Grafana service account token, read at
+              runtime via GRAFANA_SERVICE_ACCOUNT_TOKEN_FILE so the token never
+              enters the Nix store. Secret-manager agnostic: point it at a
+              sops-nix/agenix path or any other file.
+            '';
+          };
+
+          readOnly = lib.mkOption {
+            type = lib.types.bool;
+            default = true;
+            description = "Pass --disable-write so the server only registers read tools.";
+          };
+
+          extraArgs = lib.mkOption {
+            type = lib.types.listOf lib.types.str;
+            default = [ ];
+            example = [
+              "--disable-oncall"
+              "--disable-incident"
+            ];
+            description = "Extra command-line arguments for mcp-grafana (e.g. --disable-<category> to trim the tool list).";
+          };
+        };
+
         claude-obsidian = {
           enable = lib.mkEnableOption "the claude-obsidian plugin and its vault CLI";
 
@@ -116,6 +156,19 @@
           # the list form's hash-derived store path name.
           plugins = lib.mkIf cfg.claude-obsidian.enable {
             claude-obsidian = cfg.claude-obsidian.source;
+          };
+          mcpServers = lib.mkIf cfg.mcp.grafana.enable {
+            grafana = {
+              type = "stdio";
+              command = lib.getExe cfg.mcp.grafana.package;
+              args = lib.optional cfg.mcp.grafana.readOnly "--disable-write" ++ cfg.mcp.grafana.extraArgs;
+              env = {
+                GRAFANA_URL = cfg.mcp.grafana.url;
+              }
+              // lib.optionalAttrs (cfg.mcp.grafana.tokenFile != null) {
+                GRAFANA_SERVICE_ACCOUNT_TOKEN_FILE = cfg.mcp.grafana.tokenFile;
+              };
+            };
           };
         };
 

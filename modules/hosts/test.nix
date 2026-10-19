@@ -49,6 +49,11 @@
           crann.vscode.enable = true;
           crann.ai-utils.enable = true;
           crann.ai-utils.claude-obsidian.enable = true;
+          crann.ai-utils.mcp.grafana = {
+            enable = true;
+            url = "https://grafana.example.invalid";
+            tokenFile = "/run/secrets/grafana_mcp_token";
+          };
 
           crann.shells.enable = true;
           crann.shells.flakeInspectPath = "/home/test/blueprint";
