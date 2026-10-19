@@ -54,6 +54,11 @@
             url = "https://grafana.example.invalid";
             tokenFile = "/run/secrets/grafana_mcp_token";
           };
+          crann.ai-utils.channels.grafana = {
+            enable = true;
+            host = "192.0.2.10";
+            tokenFile = "/run/secrets/grafana_channel_token";
+          };
 
           crann.shells.enable = true;
           crann.shells.flakeInspectPath = "/home/test/blueprint";

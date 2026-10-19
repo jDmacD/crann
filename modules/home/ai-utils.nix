@@ -1,4 +1,4 @@
-{ inputs, ... }:
+{ inputs, withSystem, ... }:
 {
   flake.modules.homeManager.ai-utils =
     {
@@ -113,6 +113,56 @@
           };
         };
 
+        channels.grafana = {
+          enable = lib.mkEnableOption ''
+            the Grafana alerts channel: a launcher that starts Claude Code with
+            a channel server receiving Grafana webhook notifications. The
+            server is loaded only in sessions started through the launcher
+            (via --mcp-config), not in every session, so only one process
+            binds the port'';
+
+          package = lib.mkOption {
+            type = lib.types.package;
+            # crann's own package, via withSystem rather than inputs.self.
+            default = withSystem pkgs.stdenv.hostPlatform.system (
+              { config, ... }: config.packages.claude-channel-grafana
+            );
+            defaultText = lib.literalExpression "crann.packages.\${system}.claude-channel-grafana";
+            description = "The channel server package.";
+          };
+
+          launcherName = lib.mkOption {
+            type = lib.types.str;
+            default = "claude-alerts";
+            description = "Name of the launcher command added to home.packages.";
+          };
+
+          host = lib.mkOption {
+            type = lib.types.str;
+            default = "127.0.0.1";
+            example = "192.168.178.103";
+            description = "Address the webhook listener binds to. A non-loopback address requires tokenFile.";
+          };
+
+          port = lib.mkOption {
+            type = lib.types.port;
+            default = 8788;
+            description = "Port the webhook listener binds to.";
+          };
+
+          tokenFile = lib.mkOption {
+            type = lib.types.nullOr lib.types.str;
+            default = null;
+            example = "/run/user/1000/secrets/grafana_channel_token";
+            description = ''
+              Path to a file holding the bearer token Grafana's webhook contact
+              point must send (Authorization header, scheme Bearer). Read at
+              runtime so it never enters the Nix store. Required unless host
+              is a loopback address.
+            '';
+          };
+        };
+
         claude-obsidian = {
           enable = lib.mkEnableOption "the claude-obsidian plugin and its vault CLI";
 
@@ -183,7 +233,36 @@
             (pkgs.writeShellScriptBin "claude-obsidian" ''
               exec ${cfg.claude-obsidian.python.package}/bin/python3 ${cfg.claude-obsidian.source}/scripts/claude-obsidian.py "$@"
             '')
-          ];
+          ]
+          ++ lib.optional cfg.channels.grafana.enable (
+            let
+              ch = cfg.channels.grafana;
+              mcpConfig = pkgs.writeText "grafana-alerts-mcp.json" (
+                builtins.toJSON {
+                  mcpServers.grafana-alerts = {
+                    type = "stdio";
+                    command = lib.getExe ch.package;
+                    env = {
+                      CHANNEL_HOST = ch.host;
+                      CHANNEL_PORT = toString ch.port;
+                    }
+                    // lib.optionalAttrs (ch.tokenFile != null) {
+                      CHANNEL_TOKEN_FILE = ch.tokenFile;
+                    };
+                  };
+                }
+              );
+            in
+            # Custom channels aren't on the research-preview allowlist, so they
+            # need the development flag (interactive sessions only; it shows a
+            # confirmation dialog at startup).
+            pkgs.writeShellScriptBin ch.launcherName ''
+              exec ${lib.getExe cfg.claude-code.package} \
+                --mcp-config ${mcpConfig} \
+                --dangerously-load-development-channels server:grafana-alerts \
+                "$@"
+            ''
+          );
       };
     };
 }
