@@ -19,6 +19,14 @@
       "automerge": true,
       "automergeType": "pr",
       "platformAutomerge": true
+    },
+    {
+      // SDK 2.x negotiates MCP revision 2026-07-28, which Claude Code won't
+      // register as a channel. Bumps also need bun.nix regenerated
+      // (bun install runs the postinstall), so they are never automerged.
+      "matchFileNames": ["packages/claude-channel-grafana/**"],
+      "matchPackageNames": ["@modelcontextprotocol/sdk"],
+      "allowedVersions": "<2"
     }
   ]
 }
