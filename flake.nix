@@ -44,7 +44,7 @@
       inputs.treefmt-nix.follows = "treefmt-nix";
     };
     claude-obsidian = {
-      url = "github:AgriciDaniel/claude-obsidian?rev=b0d8867eec8c8ff22f5d927b3725b1123459fe3d";
+      url = "github:AgriciDaniel/claude-obsidian?rev=6414e1a232a00515dc0b89f61b1d792b3dc93237";
       flake = false;
     };
   };
