@@ -18,7 +18,7 @@
     };
     niri = {
       # url = "github:sodiboo/niri-flake?rev=21777ada91b8b0d91a61c78294467eed232db936";
-      url = "github:epireyn/niri-flake?rev=954872c5959beb90fbecdcfc890c12589adb2226";
+      url = "github:epireyn/niri-flake?rev=3e52b9d7110630f2b32e607a5a0c9bd17216bbfc";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     noctalia = {
