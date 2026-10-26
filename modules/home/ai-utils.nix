@@ -26,10 +26,13 @@
 
         - Never use raw `Write`/`Edit` on a vault's `wiki/`. Always go through
           the plugin's transaction core (`claude-obsidian.transaction.v1`:
-          read expected hashes, build a bundle, `transaction inspect` for a
-          dry-run, then `transaction apply` with the approved plan hash). A
-          raw write silently skips the vault's locking, hash verification,
-          and required coupled index/log/hot-cache updates.
+          read expected hashes, build a bundle, dry-run it, then apply it
+          with the approved plan hash). Save and ingest bundles use
+          `workflow inspect`/`workflow apply`, and apply only when both
+          `storage_valid` and `workflow_complete` pass; other operations use
+          `transaction inspect`/`transaction apply`. A raw write silently
+          skips the vault's locking, hash verification, and required
+          coupled index/log/hot-cache updates.
         - Never write `.vault-meta/`. The engine owns its locks, journals and
           retrieval indexes, and no bundle may target them. Change the
           methodology mode only with `claude-obsidian mode set`.
