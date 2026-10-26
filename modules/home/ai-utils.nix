@@ -22,13 +22,23 @@
         This machine has the claude-obsidian plugin enabled for persistent
         Obsidian-vault memory. When writing to a claude-obsidian vault
         (resolved via `.claude-obsidian.json`, `CLAUDE_OBSIDIAN_VAULT`, or
-        workspace config), never use raw `Write`/`Edit` on files under a
-        vault's `wiki/`, `.vault-meta/`, or `inbox/` — always go through the
-        plugin's transaction core (`claude-obsidian.transaction.v1`: read
-        expected hashes, build a bundle, `transaction inspect` for a
-        dry-run, then `transaction apply` with the approved plan hash). A raw
-        write silently skips the vault's locking, hash verification, and
-        required coupled index/log/hot-cache updates.
+        workspace config):
+
+        - Never use raw `Write`/`Edit` on a vault's `wiki/`. Always go through
+          the plugin's transaction core (`claude-obsidian.transaction.v1`:
+          read expected hashes, build a bundle, `transaction inspect` for a
+          dry-run, then `transaction apply` with the approved plan hash). A
+          raw write silently skips the vault's locking, hash verification,
+          and required coupled index/log/hot-cache updates.
+        - Never write `.vault-meta/`. The engine owns its locks, journals and
+          retrieval indexes, and no bundle may target them. Change the
+          methodology mode only with `claude-obsidian mode set`.
+        - `inbox/` is the user's source intake. Read it, never modify it, and
+          bring a source in with `capture plan`/`capture apply`, which writes
+          to `.raw/captured/`.
+        - The transaction engine only creates or replaces files. Moving or
+          deleting pages (e.g. into a PARA archives folder) is a separate,
+          explicitly approved migration, not something to do with `git mv`.
 
         Prefer invoking the relevant `claude-obsidian:*` skill (save,
         wiki-ingest, wiki-query, wiki-mode, wiki-lint, ...) so its
