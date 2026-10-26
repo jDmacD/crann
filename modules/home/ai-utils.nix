@@ -42,6 +42,14 @@
         - The transaction engine only creates or replaces files. Moving or
           deleting pages (e.g. into a PARA archives folder) is a separate,
           explicitly approved migration, not something to do with `git mv`.
+        - When operations are checkpointed (`claude-obsidian checkpoint <id>`),
+          checkpoint each one before building the next bundle. A later
+          operation that touches the same files (usually `index.md`,
+          `log.md`, `hot.md`) makes the earlier checkpoint fail with
+          `TRANSACTION_DRIFT`.
+        - The save/ingest `workflow` gate rejects a `wiki/hot.md` over 500
+          words. When adding to it, condense or drop an older line in the same
+          bundle, and check the word count before `workflow inspect`.
 
         Prefer invoking the relevant `claude-obsidian:*` skill (save,
         wiki-ingest, wiki-query, wiki-mode, wiki-lint, ...) so its
