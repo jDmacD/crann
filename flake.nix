@@ -1,6 +1,6 @@
 {
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/960e961b52759aefdc00d012d41d6c456c34faee";
+    nixpkgs.url = "github:nixos/nixpkgs/d9b411888822e17a4c06fb0b2fdeed0a7c787012";
 
     flake-parts.url = "github:hercules-ci/flake-parts?rev=024633cd702b10285db5cb19b40ad48d2399ba60";
     import-tree.url = "github:vic/import-tree?rev=eb1b52eaecc57f7c136d07ae8a93e724dfecac46";
