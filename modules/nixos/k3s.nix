@@ -16,14 +16,17 @@
 # to `config.sops.secrets."k3s/token".path`, agenix, or whatever the consumer
 # already has.
 #
-# The k3s package is pinned via nixpkgs-multiverse to 1.35.6+k3s1 — the
-# `k3s_1_35` attribute, matching `k3s --version` on the fleet's actual nodes
-# (verified against picard.lan's `kubectl get nodes`) — rather than
-# `pkgs.k3s`/`pkgs.k3s_1_35`, since a consumer's own nixpkgs pin frequently
-# lacks the minor version line a running cluster needs (this is exactly what
-# forced nix-pi's original module to reach into a second nixpkgs input for
-# `k3s_1_35`). `crann.k3s.package` stays overridable for a host that wants a
-# different line or its own nixpkgs' build.
+# The k3s package comes from nixpkgs-multiverse, pinned to `crann.k3s.version`
+# (default 1.35.9+k3s1, matching `k3s --version` on the fleet), rather than
+# `pkgs.k3s`/`pkgs.k3s_1_35`: a consumer's own nixpkgs pin frequently lacks
+# the minor version line a running cluster needs. The multiverse attribute is
+# derived from the version (`k3s_1_35` for 1.35.x), so a host moves k3s by
+# changing `version` alone, still through multiverse. `crann.k3s.package`
+# stays overridable for a host that wants its own nixpkgs' build.
+#
+# k3s's own `eviction-hard` sets only the two disk thresholds, which drops
+# kubelet's default `memory.available<100Mi`; `crann.k3s.evictionHard`
+# restores it (see the option for why it is a CLI flag).
 { inputs, ... }:
 {
   flake.modules.nixos.k3s =
@@ -35,6 +38,15 @@
     }:
     let
       cfg = config.crann.k3s;
+      # "1.35.9+k3s1" -> "k3s_1_35", the nixpkgs attribute for that minor line.
+      attr = "k3s_" + lib.replaceStrings [ "." ] [ "_" ] (lib.versions.majorMinor cfg.version);
+      # `%%` because the flags end up in ExecStart, where `%` is a systemd specifier.
+      evictionFlag = lib.optional (cfg.evictionHard != { }) (
+        "--kubelet-arg=eviction-hard="
+        + lib.concatStringsSep "," (
+          lib.mapAttrsToList (k: v: "${k}<${lib.replaceStrings [ "%" ] [ "%%" ] v}") cfg.evictionHard
+        )
+      );
     in
     {
       imports = [ inputs.multiverse.nixosModules.default ];
@@ -42,12 +54,23 @@
       options.crann.k3s = {
         enable = lib.mkEnableOption "the k3s Kubernetes distribution";
 
+        version = lib.mkOption {
+          type = lib.types.str;
+          default = "1.35.9+k3s1";
+          example = "1.35.8+k3s1";
+          description = ''
+            The k3s version to pin through nixpkgs-multiverse. Must be a version
+            multiverse's index has for the matching `k3s_<major>_<minor>`
+            attribute.
+          '';
+        };
+
         package = lib.mkOption {
           type = lib.types.package;
-          default = config.multiverse.pinned.k3s_1_35;
-          defaultText = lib.literalExpression "config.multiverse.pinned.k3s_1_35";
+          default = config.multiverse.pinned.${attr};
+          defaultText = lib.literalExpression "config.multiverse.pinned.k3s_<major>_<minor> (from crann.k3s.version)";
           description = ''
-            The k3s package to use. Defaults to 1.35.6+k3s1, pinned via
+            The k3s package to use. Defaults to `version`, pinned via
             nixpkgs-multiverse rather than the consumer's own nixpkgs.
           '';
         };
@@ -87,7 +110,25 @@
             "--flannel-backend=none"
             "--tls-san foo.lan"
           ];
-          description = "Extra flags appended after the base --node-name flag.";
+          description = "Extra flags appended after the base --node-name and eviction flags.";
+        };
+
+        evictionHard = lib.mkOption {
+          type = lib.types.attrsOf lib.types.str;
+          default = {
+            "memory.available" = "100Mi";
+            "imagefs.available" = "5%";
+            "nodefs.available" = "5%";
+          };
+          description = ''
+            kubelet's hard eviction thresholds, passed as
+            `--kubelet-arg=eviction-hard=...`. k3s sets only the two disk
+            thresholds, which drops kubelet's default `memory.available<100Mi`;
+            the default restores it and repeats k3s's disk thresholds, since the
+            flag replaces the whole map. A CLI flag rather than kubelet config,
+            because k3s writes its defaults to a kubelet.conf.d drop-in that
+            would override it. Set to `{ }` to leave k3s's defaults alone.
+          '';
         };
 
         ceph.enable = lib.mkOption {
@@ -112,7 +153,7 @@
             ];
 
             multiverse.enable = true;
-            multiverse.pins.k3s_1_35 = "1.35.6+k3s1";
+            multiverse.pins.${attr} = cfg.version;
 
             networking.firewall.enable = false;
             networking.firewall.checkReversePath = false;
@@ -133,7 +174,9 @@
               role = cfg.role;
               tokenFile = cfg.tokenFile;
               serverAddr = lib.mkIf (cfg.role == "agent") cfg.serverAddr;
-              extraFlags = toString ([ "--node-name ${config.networking.hostName}" ] ++ cfg.extraFlags);
+              extraFlags = toString (
+                [ "--node-name ${config.networking.hostName}" ] ++ evictionFlag ++ cfg.extraFlags
+              );
             };
           }
           (lib.mkIf cfg.ceph.enable {
