@@ -41,6 +41,7 @@
       config.flake.modules.homeManager.obsidian
       config.flake.modules.homeManager.remote-builder
       config.flake.modules.homeManager.yazi
+      config.flake.modules.homeManager.vault-sync
       (
         { pkgs, ... }:
         {
@@ -80,6 +81,13 @@
           crann.optnix.enable = true;
 
           crann.obsidian.enable = true;
+
+          # Needs ai-utils' claude-obsidian (enabled above).
+          crann.vault-sync = {
+            enable = true;
+            remote = "ssh://git@example.org/test/vault.git";
+            rerankOllamaUrl = "https://ollama.example.lan";
+          };
 
           crann.remote-builder.enable = true;
           crann.remote-builder.machines = [

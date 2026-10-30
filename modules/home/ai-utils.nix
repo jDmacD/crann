@@ -16,6 +16,77 @@
       # every consumer; the vault itself is discovered at runtime via
       # .claude-obsidian.json / CLAUDE_OBSIDIAN_VAULT / current-directory
       # discovery, per claude-obsidian's own compound-vault contract.
+      # PreToolUse hook (Edit|Write): blocks raw writes under a claude-obsidian
+      # vault's wiki/, .vault-meta/, or inbox/ directories, enforcing the rule
+      # claudeObsidianContext states. The vault root is the nearest ancestor
+      # directory containing .claude-obsidian.json. Ported from blueprint.
+      block-vault-writes = pkgs.writeShellApplication {
+        name = "block-vault-writes";
+        runtimeInputs = with pkgs; [
+          coreutils
+          jq
+        ];
+        text = ''
+          input="$(cat)"
+          file_path="$(printf '%s' "$input" | jq -r '.tool_input.file_path // empty')"
+
+          [ -z "$file_path" ] && exit 0
+
+          abs_path="$(realpath -m -- "$file_path" 2>/dev/null)" || exit 0
+          d="$(dirname -- "$abs_path")"
+
+          vault_root=""
+          while [ "$d" != "/" ]; do
+            if [ -f "$d/.claude-obsidian.json" ]; then
+              vault_root="$d"
+              break
+            fi
+            d="$(dirname -- "$d")"
+          done
+
+          [ -z "$vault_root" ] && exit 0
+
+          rel="''${abs_path#"$vault_root"/}"
+
+          case "$rel" in
+            wiki/*|wiki|.vault-meta/*|.vault-meta|inbox/*|inbox)
+              reason="Blocked: '$rel' is inside claude-obsidian vault '$vault_root' (wiki/.vault-meta/inbox). Never use raw Write/Edit here -- use the claude-obsidian transaction core (read expected hashes, build a bundle, transaction inspect, then transaction apply) or the matching claude-obsidian:* skill (e.g. save, wiki-ingest) instead."
+              jq -n --arg reason "$reason" '{hookSpecificOutput: {hookEventName: "PreToolUse", permissionDecision: "deny", permissionDecisionReason: $reason}}'
+              ;;
+          esac
+          exit 0
+        '';
+      };
+
+      # Hooks ship as a managed plugin rather than programs.claude-code.settings,
+      # so ~/.claude/settings.json stays a mutable file.
+      guardPlugin = pkgs.runCommand "claude-obsidian-guard-plugin" { } ''
+        mkdir -p $out/.claude-plugin $out/hooks
+        cp ${
+          pkgs.writers.writeJSON "plugin.json" {
+            name = "claude-obsidian-guard";
+            version = "1.0.0";
+            description = "Blocks raw Write/Edit into a claude-obsidian vault's wiki/, .vault-meta/ and inbox/";
+          }
+        } $out/.claude-plugin/plugin.json
+        cp ${
+          pkgs.writers.writeJSON "hooks.json" {
+            hooks.PreToolUse = [
+              {
+                matcher = "Edit|Write";
+                hooks = [
+                  {
+                    type = "command";
+                    command = lib.getExe block-vault-writes;
+                    timeout = 10;
+                  }
+                ];
+              }
+            ];
+          }
+        } $out/hooks/hooks.json
+      '';
+
       claudeObsidianContext = ''
         ## claude-obsidian
 
@@ -202,6 +273,16 @@
             description = "Source of the claude-obsidian plugin, linked into Claude Code via programs.claude-code.plugins.";
           };
 
+          blockRawVaultWrites = lib.mkOption {
+            type = lib.types.bool;
+            default = true;
+            description = ''
+              Install a PreToolUse hook that denies Claude Code's raw Write/Edit
+              under a vault's wiki/, .vault-meta/ and inbox/, so mutations go
+              through the claude-obsidian transaction core.
+            '';
+          };
+
           python.package = lib.mkOption {
             type = lib.types.package;
             default = pkgs.python311;
@@ -225,9 +306,14 @@
           # Attrset form (requires home-manager's newer either(attrsOf, listOf)
           # plugins type). Gives the plugin directory a stable name instead of
           # the list form's hash-derived store path name.
-          plugins = lib.mkIf cfg.claude-obsidian.enable {
-            claude-obsidian = cfg.claude-obsidian.source;
-          };
+          plugins = lib.mkIf cfg.claude-obsidian.enable (
+            {
+              claude-obsidian = cfg.claude-obsidian.source;
+            }
+            // lib.optionalAttrs cfg.claude-obsidian.blockRawVaultWrites {
+              claude-obsidian-guard = guardPlugin;
+            }
+          );
           mcpServers = lib.mkIf cfg.mcp.grafana.enable {
             grafana = {
               type = "stdio";
@@ -241,6 +327,13 @@
               };
             };
           };
+        };
+
+        # Claude Code registers itself for claude-cli:// links at runtime. Once
+        # something enables xdg.mimeApps (crann.thunar does), home-manager owns
+        # mimeapps.list and that registration would be lost, so declare it.
+        xdg.mimeApps.defaultApplications = lib.mkIf cfg.claude-code.enable {
+          "x-scheme-handler/claude-cli" = [ "claude-code-url-handler.desktop" ];
         };
 
         home.packages =
