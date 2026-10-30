@@ -45,6 +45,35 @@
         git -C "$vault" config user.email ${lib.escapeShellArg gitUser.email}
       '';
 
+      # wiki-retrieve's reranker accepts these hosts without
+      # --allow-remote-ollama (validate_ollama_config in claude-obsidian's
+      # scripts/contextual-prefix.py), so a URL pointing at one gets neither the
+      # flag nor the approval wording.
+      rerankIsLocal =
+        cfg.rerankOllamaUrl != null
+        &&
+          builtins.match "https?://(localhost|127\\.0\\.0\\.1|\\[::1])(:[0-9]+)?/?" cfg.rerankOllamaUrl
+          != null;
+      allowRemoteFlag = lib.optionalString (!rerankIsLocal) " --allow-remote-ollama";
+      rerankIntro = lib.removeSuffix "\n" (
+        if rerankIsLocal then
+          ''
+            wiki-retrieve reranks against this host's own Ollama at
+            `${cfg.rerankOllamaUrl}`, so the query and candidate chunk text never
+            leave the machine and no `--allow-remote-ollama` is needed. Use only
+            the `${cfg.rerankModel}` model, never the Ollama's `:cloud` models.
+            Invoke it as:
+          ''
+        else
+          ''
+            ${cfg.rerankApproval} for wiki-retrieve to
+            rerank against the Ollama at `${cfg.rerankOllamaUrl}`, sending the
+            query and candidate chunk text. This approval covers only that URL and
+            only the `${cfg.rerankModel}` model, never the Ollama's `:cloud`
+            models. Invoke it as:
+          ''
+      );
+
       vault-sync = pkgs.writeShellApplication {
         name = "vault-sync";
         runtimeInputs = with pkgs; [
@@ -181,7 +210,7 @@
           results=""
           ${lib.optionalString (cfg.rerankOllamaUrl != null) ''
             results="$(OLLAMA_URL=${lib.escapeShellArg cfg.rerankOllamaUrl} timeout ${toString cfg.recall.rerankTimeout} \
-              "''${retrieve[@]}" --allow-remote-ollama --model ${lib.escapeShellArg cfg.rerankModel} 2>/dev/null)" || results=""
+              "''${retrieve[@]}"${allowRemoteFlag} --model ${lib.escapeShellArg cfg.rerankModel} 2>/dev/null)" || results=""
           ''}
           [ -n "$results" ] || results="$("''${retrieve[@]}" --no-rerank 2>/dev/null)" || results=""
 
@@ -283,11 +312,13 @@
           default = null;
           example = "https://ollama.local.jtec.xyz";
           description = ''
-            Non-localhost Ollama endpoint that wiki-retrieve may rerank against.
-            Setting it records the user's standing approval (worded by
-            `rerankApproval`), in the Claude Code context, to send queries and
+            Ollama endpoint that wiki-retrieve reranks against, in the recall
+            hook and in the Claude Code context. For any host other than
+            `localhost`, `127.0.0.1` or `[::1]`, setting it records the user's
+            standing approval (worded by `rerankApproval`) to send queries and
             candidate chunk text there with `--allow-remote-ollama`, using only
-            `rerankModel`.
+            `rerankModel`. A loopback URL needs no approval or flag, and the
+            context describes it as the host's own Ollama.
           '';
         };
 
@@ -295,7 +326,7 @@
           type = lib.types.str;
           default = "The user has given standing approval";
           example = "jDmacD has given standing approval (2026-10-11)";
-          description = "Opening of the Claude Code context sentence that records the rerank approval.";
+          description = "Opening of the Claude Code context sentence that records the rerank approval. Unused when `rerankOllamaUrl` is loopback.";
         };
 
         rerankModel = lib.mkOption {
@@ -393,19 +424,15 @@
 
             ### Retrieval reranking
 
-            ${cfg.rerankApproval} for wiki-retrieve to
-            rerank against the cluster Ollama at `${cfg.rerankOllamaUrl}` (LAN-only,
-            internal gateway), sending the query and candidate chunk text. This
-            approval covers only that URL and only the `${cfg.rerankModel}` model,
-            never the Ollama's `:cloud` models. Invoke it as:
+            ${rerankIntro}
 
             ```bash
-            OLLAMA_URL=${cfg.rerankOllamaUrl} python3 "$RETRIEVE" --vault "$VAULT" "$QUERY" --top 5 --allow-remote-ollama --model ${cfg.rerankModel}
+            OLLAMA_URL=${cfg.rerankOllamaUrl} python3 "$RETRIEVE" --vault "$VAULT" "$QUERY" --top 5${allowRemoteFlag} --model ${cfg.rerankModel}
             ```
 
-            A cold model load can make the first call return a gateway 504. The
-            strategy then reads `bm25+rerank:noop-embed-error` and results are in
-            plain BM25 order, so retry once. `bm25+rerank:noop-local-proof` means
+            A cold model load can make the first call fail (a 504 if a gateway
+            sits in front). The strategy then reads `bm25+rerank:noop-embed-error`
+            and results are in plain BM25 order, so retry once. `bm25+rerank:noop-local-proof` means
             the server didn't prove cloud is disabled (`/api/status` must report
             `cloud.disabled: true`; set `OLLAMA_NO_CLOUD=1` on the server). Retrying
             won't help, so tell the user.
