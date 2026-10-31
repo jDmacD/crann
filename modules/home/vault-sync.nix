@@ -20,6 +20,15 @@
 # rebuilds it, local-only (--no-llm), whenever the committed wiki/ tree has
 # changed. The index is gitignored, so each host keeps its own copy.
 #
+# Before fetching, a sync also sweeps: wiki/ changes left without a checkpoint
+# are committed, once wiki/ has been quiet for `sweepAfter` minutes and every
+# transaction journal is complete or rolled back. With several Claude sessions
+# saving to one vault, a save that isn't checkpointed before another save
+# rewrites index/log/hot can never be checkpointed (TRANSACTION_DRIFT), and its
+# leftovers then block or entangle every later session's checkpoint. The sweep
+# keeps that from accumulating; the quiet period leaves each session time to
+# checkpoint its own operation first.
+#
 # A UserPromptSubmit hook also injects the vault's hot cache and the pages
 # wiki-retrieve ranks highest on each session's first prompt (`recall`).
 # Raw-write blocking lives in crann.ai-utils (claude-obsidian.blockRawVaultWrites).
@@ -78,7 +87,9 @@
         name = "vault-sync";
         runtimeInputs = with pkgs; [
           coreutils
+          findutils
           git
+          jq
           openssh
           util-linux
         ];
@@ -124,6 +135,31 @@
             fi
           }
 
+          ${lib.optionalString (cfg.sweepAfter != null) ''
+            sweep() {
+              [ -n "$(git status --porcelain -- wiki)" ] || return 0
+              # Fresh changes belong to a session that may be about to checkpoint.
+              [ -z "$(find wiki -mmin -${toString cfg.sweepAfter} -print -quit)" ] || return 0
+              local open
+              open=$(find .vault-meta/transactions -mindepth 2 -maxdepth 2 -name journal.json \
+                -exec jq -r 'select(.state != "complete" and .state != "rolled-back") | input_filename' {} + 2>/dev/null \
+                | head -n1)
+              if [ -n "$open" ]; then
+                echo "vault-sync: not sweeping, transaction $(basename "$(dirname "$open")") isn't complete" >&2
+                return 0
+              fi
+              local since ops
+              since=$(git log -1 --format=%ct)
+              ops=$(find .vault-meta/transactions -mindepth 1 -maxdepth 1 -type d -newermt "@$since" \
+                ! -exec test -e '{}/checkpoint.json' ';' -printf '- %f\n' | sort)
+              git add -A -- wiki
+              git commit --quiet -m "wiki: sweep changes left without a checkpoint" \
+                -m "Operations completed since the last commit without a checkpoint:" \
+                -m "''${ops:-(none found)}" -- wiki
+              echo "vault-sync: committed wiki/ changes left without a checkpoint"
+            }
+          ''}
+
           if $if_ahead && [ "$(upstream_ahead)" -eq 0 ]; then
             exit 0
           fi
@@ -136,6 +172,7 @@
             echo "vault-sync: a rebase/merge is in progress in $vault; resolve it by hand" >&2
             exit 1
           fi
+          ${lib.optionalString (cfg.sweepAfter != null) "sweep"}
 
           if ! timeout 30 git fetch --quiet origin; then
             echo "vault-sync: fetch failed (offline?); vault not synced"
@@ -370,6 +407,16 @@
           default = "5min";
           description = "How often the systemd timer syncs the vault.";
         };
+
+        sweepAfter = lib.mkOption {
+          type = lib.types.nullOr lib.types.ints.positive;
+          default = 10;
+          description = ''
+            Minutes wiki/ must be unchanged before a sync commits changes left
+            without a checkpoint. Swept commits skip the checkpoint's lint and
+            provenance checks. `null` disables the sweep.
+          '';
+        };
       };
 
       config = lib.mkIf cfg.enable {
@@ -400,6 +447,21 @@
               vault transactions so they get pushed; uncommitted vault changes
               stay local to this host. This is the user's standing request for
               Git history, which claude-obsidian otherwise only makes on request.
+              Run it in the same Bash call as the apply
+              (`... workflow apply ... && python3 "$CORE" checkpoint <operation-id> --vault ...`):
+              other Claude sessions save to this vault too, and once another save
+              rewrites index/log/hot, this operation can't be checkpointed
+              (`TRANSACTION_DRIFT`).
+          ''
+          + lib.optionalString (cfg.sweepAfter != null) ''
+            - If the checkpoint is refused (lint findings in other sessions' pages,
+              `TRANSACTION_DRIFT`, staged changes that aren't yours), don't edit
+              other sessions' pages or commit by hand: vault-sync commits
+              changes left without a checkpoint once `wiki/` has been quiet for
+              ${toString cfg.sweepAfter} minutes. A checkpoint that reports
+              `NOTHING_TO_COMMIT` was already swept. Tell the user which it was.
+          ''
+          + ''
             - `.vault-meta/` is gitignored and per-host, except `mode.json`
               (the methodology mode), which is tracked so every host files new
               notes the same way.
