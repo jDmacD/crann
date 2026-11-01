@@ -27,6 +27,15 @@
 # k3s's own `eviction-hard` sets only the two disk thresholds, which drops
 # kubelet's default `memory.available<100Mi`; `crann.k3s.evictionHard`
 # restores it (see the option for why it is a CLI flag).
+#
+# `crann.k3s.registries` is k3s's registries.yaml as Nix. It is written to the
+# store and passed with `--private-registry` rather than placed in /etc, so a
+# change alters ExecStart and restarts k3s on switch (k3s reads it only at
+# startup). `crann.k3s.embeddedRegistry` turns on k3s's embedded Spegel
+# mirror: nodes serve image layers they already hold to each other, and
+# containerd falls back to the upstream registry when no peer has them. The
+# flag is server-only (agents follow the server), but every node needs the
+# mirror entries, so enable it on all hosts of a cluster.
 { inputs, ... }:
 {
   flake.modules.nixos.k3s =
@@ -38,6 +47,8 @@
     }:
     let
       cfg = config.crann.k3s;
+      yaml = pkgs.formats.yaml { };
+      registriesFile = yaml.generate "registries.yaml" cfg.registries;
       # "1.35.9+k3s1" -> "k3s_1_35", the nixpkgs attribute for that minor line.
       attr = "k3s_" + lib.replaceStrings [ "." ] [ "_" ] (lib.versions.majorMinor cfg.version);
       # `%%` because the flags end up in ExecStart, where `%` is a systemd specifier.
@@ -110,7 +121,7 @@
             "--flannel-backend=none"
             "--tls-san foo.lan"
           ];
-          description = "Extra flags appended after the base --node-name and eviction flags.";
+          description = "Extra flags appended after the base --node-name, eviction and registry flags.";
         };
 
         evictionHard = lib.mkOption {
@@ -129,6 +140,46 @@
             because k3s writes its defaults to a kubelet.conf.d drop-in that
             would override it. Set to `{ }` to leave k3s's defaults alone.
           '';
+        };
+
+        registries = lib.mkOption {
+          type = yaml.type;
+          default = { };
+          example = {
+            mirrors."docker.io".endpoint = [ "https://mirror.example.lan:5000" ];
+          };
+          description = ''
+            Contents of k3s's registries.yaml (`mirrors`, `configs`), passed
+            with `--private-registry`. Left empty, k3s reads
+            /etc/rancher/k3s/registries.yaml as usual.
+          '';
+        };
+
+        embeddedRegistry = {
+          enable = lib.mkEnableOption ''
+            k3s's embedded registry mirror (Spegel), which shares image layers
+            between nodes. Enable it on every node of the cluster: servers get
+            `--embedded-registry`, and all nodes get mirror entries for
+            `embeddedRegistry.mirrors`
+          '';
+
+          mirrors = lib.mkOption {
+            type = lib.types.listOf lib.types.str;
+            default = [
+              "docker.io"
+              "ghcr.io"
+              "quay.io"
+              "registry.k8s.io"
+              "lscr.io"
+              "nvcr.io"
+              "public.ecr.aws"
+            ];
+            description = ''
+              Registries whose images are shared between nodes. Each becomes an
+              empty `mirrors` entry in `registries`, which leaves the upstream
+              registry as the fallback endpoint.
+            '';
+          };
         };
 
         ceph.enable = lib.mkOption {
@@ -152,6 +203,10 @@
               }
             ];
 
+            crann.k3s.registries = lib.mkIf cfg.embeddedRegistry.enable {
+              mirrors = lib.genAttrs cfg.embeddedRegistry.mirrors (_: { });
+            };
+
             multiverse.enable = true;
             multiverse.pins.${attr} = cfg.version;
 
@@ -163,7 +218,8 @@
               4240 # cilium health
               443
               80
-            ];
+            ]
+            ++ lib.optional cfg.embeddedRegistry.enable 5001; # spegel p2p
             networking.firewall.allowedUDPPorts = [
               8472 # flannel/cilium vxlan (inter-node networking)
             ];
@@ -175,7 +231,11 @@
               tokenFile = cfg.tokenFile;
               serverAddr = lib.mkIf (cfg.role == "agent") cfg.serverAddr;
               extraFlags = toString (
-                [ "--node-name ${config.networking.hostName}" ] ++ evictionFlag ++ cfg.extraFlags
+                [ "--node-name ${config.networking.hostName}" ]
+                ++ evictionFlag
+                ++ lib.optional (cfg.registries != { }) "--private-registry=${registriesFile}"
+                ++ lib.optional (cfg.embeddedRegistry.enable && cfg.role == "server") "--embedded-registry"
+                ++ cfg.extraFlags
               );
             };
           }

@@ -157,6 +157,7 @@
           crann.k3s.enable = true;
           crann.k3s.role = "server";
           crann.k3s.tokenFile = "/run/secrets/k3s-token";
+          crann.k3s.embeddedRegistry.enable = true;
           crann.k3s-nvidia.enable = true;
 
           # The nixos noctalia module contributes only the cachix substituter.
