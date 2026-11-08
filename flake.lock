@@ -365,17 +365,17 @@
         "xwayland-satellite-unstable": "xwayland-satellite-unstable"
       },
       "locked": {
-        "lastModified": 1794133346,
-        "narHash": "sha256-YgERzfbB4uKTkb2zAsUZ6/dPw+6Bl3VQTsf3STDDbP4=",
+        "lastModified": 1794158374,
+        "narHash": "sha256-H6AIGlagRSwJ0Z85b6ltBSawHRoJSuvlrZN2CsEJdXw=",
         "owner": "epireyn",
         "repo": "niri-flake",
-        "rev": "ac76ebb4939c09b7bc46e8995c6d43c7d8d54415",
+        "rev": "1f00c6c3cdf5f5c0f7bf59460b4e4ff2effdbb9f",
         "type": "github"
       },
       "original": {
         "owner": "epireyn",
         "repo": "niri-flake",
-        "rev": "ac76ebb4939c09b7bc46e8995c6d43c7d8d54415",
+        "rev": "1f00c6c3cdf5f5c0f7bf59460b4e4ff2effdbb9f",
         "type": "github"
       }
     },
@@ -399,11 +399,11 @@
     "niri-unstable": {
       "flake": false,
       "locked": {
-        "lastModified": 1794117565,
-        "narHash": "sha256-KJkbSpOPpBEJgqCKwS+xfrQ1zfmRWfSevvNjaptg3Ag=",
+        "lastModified": 1794142091,
+        "narHash": "sha256-yyY6yKRasttZ8GKTqfyDGdlWtqHPVE19ZMrJ5dmHGnY=",
         "owner": "niri-wm",
         "repo": "niri",
-        "rev": "777d6a81d4b3807d3e472a8c74b028f85520ca43",
+        "rev": "90d5c1bf7381a81c953cb8b3f26c5ddcaa3f48cb",
         "type": "github"
       },
       "original": {
