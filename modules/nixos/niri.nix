@@ -66,6 +66,11 @@
               enable = true;
               package = cfg.package;
             };
+            # niri runs X11 apps (Steam, etc.) through xwayland-satellite, which
+            # it spawns on demand and exports DISPLAY for. It looks the binary up
+            # on PATH at session start; without it niri disables X11 support for
+            # the session and X11-only apps fail with "unable to open display".
+            environment.systemPackages = [ pkgs.xwayland-satellite ];
           }
           # Inject crann's default niri config into home-manager users. Only when
           # the host actually uses the home-manager NixOS module — otherwise the
