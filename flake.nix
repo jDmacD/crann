@@ -13,7 +13,7 @@
     };
 
     home-manager = {
-      url = "github:nix-community/home-manager?rev=a9752a621164e9f84eb2a15858f1d54fd3cedab8";
+      url = "github:nix-community/home-manager?rev=82ce401aa350502897c3f2e85f384d61cd3b0b6d";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     niri = {
