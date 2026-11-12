@@ -35,6 +35,7 @@
       config.flake.modules.homeManager.terminal
       config.flake.modules.homeManager.git
       config.flake.modules.homeManager.kubernetes
+      config.flake.modules.homeManager.helix
       config.flake.modules.homeManager.desktop
       config.flake.modules.homeManager.nix-utils
       config.flake.modules.homeManager.optnix
@@ -72,6 +73,8 @@
 
           crann.kubernetes.enable = true;
           crann.kubernetes.extraPackages = [ pkgs.k3d ];
+
+          crann.helix.enable = true;
 
           crann.desktop.enable = true;
 
