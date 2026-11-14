@@ -1,0 +1,5 @@
+# The shared Noctalia desktop, installed as ~/.config/noctalia/desktop.toml on
+# every host with crann.noctalia.desktop.enable. Loaded after config.toml
+# (crann + stylix) and before host.toml (crann.noctalia.hostSettings).
+# Fill it from the GUI with:
+#   noctalia-capture --write ~/Code/crann/modules/_lib/noctalia/desktop.toml

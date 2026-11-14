@@ -238,6 +238,16 @@
               # Same modules as test-home, exercised through the useGlobalPkgs
               # path this time.
               crann.noctalia.enable = true;
+              # Shared desktop layer plus a host layer, so both files go
+              # through `noctalia config validate` at build time.
+              crann.noctalia.desktop.enable = true;
+              crann.noctalia.hostSettings.wallpaper = {
+                per_monitor_directories = true;
+                monitor.portrait = {
+                  match = "P2419H";
+                  directory = "~/Pictures/Wallpapers/portrait";
+                };
+              };
               crann.shells.enable = true;
               crann.terminal.enable = true;
               crann.kubernetes.enable = true;
