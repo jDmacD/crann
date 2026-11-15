@@ -44,6 +44,16 @@
           default = { };
           description = "Extra stylix settings merged over crann's defaults (e.g. `image`, `base16Scheme`).";
         };
+        textScheme = lib.mkOption {
+          type = lib.types.nullOr (lib.types.either lib.types.path lib.types.str);
+          default = "${pkgs.base16-schemes}/share/themes/gigavolt.yaml";
+          defaultText = lib.literalExpression ''"''${pkgs.base16-schemes}/share/themes/gigavolt.yaml"'';
+          description = ''
+            base16 scheme for terminals, editors and CLI tools, separate from the
+            desktop's `stylix.base16Scheme` (see _lib/stylix-text-scheme.nix).
+            `null` makes them follow the desktop scheme.
+          '';
+        };
       };
 
       config = lib.mkIf cfg.enable (
@@ -63,6 +73,13 @@
               {
                 home.packages = [ pkgs.nerd-fonts.symbols-only ];
               }
+              (
+                hm:
+                import ../_lib/stylix-text-scheme.nix {
+                  inherit (hm) config lib options;
+                  scheme = cfg.textScheme;
+                }
+              )
             ];
           })
         ]
