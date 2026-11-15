@@ -40,7 +40,11 @@
             ripgrep
             secretspec
             bitwarden-cli
-            bws
+            # bws links SQLite but doesn't list it; fixed on master in
+            # nixpkgs be02912c0 (#585525). Drop this once nixos-unstable has it.
+            (bws.overrideAttrs (old: {
+              buildInputs = old.buildInputs ++ [ sqlite ];
+            }))
           ];
           defaultText = lib.literalExpression "[ pkgs.libsixel ]";
           description = "The terminal tools to install. Replaces crann's default set.";
