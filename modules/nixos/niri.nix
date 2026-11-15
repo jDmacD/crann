@@ -71,6 +71,28 @@
             # on PATH at session start; without it niri disables X11 support for
             # the session and X11-only apps fail with "unable to open display".
             environment.systemPackages = [ pkgs.xwayland-satellite ];
+            # xdg-desktop-portal-gnome (47+) has no file chooser of its own: it
+            # delegates FileChooser to Nautilus over D-Bus and fails with "The
+            # name is not activatable" when Nautilus isn't installed, so "Open
+            # Folder" etc. silently do nothing. Route FileChooser to the GTK
+            # portal instead. This file overrides niri's shipped
+            # niri-portals.conf, so its other entries are repeated here.
+            xdg.portal = {
+              extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
+              config.niri = {
+                default = [
+                  "gnome"
+                  "gtk"
+                ];
+                "org.freedesktop.impl.portal.Access" = "gtk";
+                "org.freedesktop.impl.portal.Notification" = "gtk";
+                "org.freedesktop.impl.portal.Secret" = [
+                  "oo7-portal"
+                  "gnome-keyring"
+                ];
+                "org.freedesktop.impl.portal.FileChooser" = "gtk";
+              };
+            };
           }
           # Inject crann's default niri config into home-manager users. Only when
           # the host actually uses the home-manager NixOS module — otherwise the
