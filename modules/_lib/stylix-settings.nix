@@ -12,7 +12,9 @@
 { pkgs }:
 {
   autoEnable = true;
-  base16Scheme = "${pkgs.base16-schemes}/share/themes/material-vivid.yaml";
+  # Picked for deuteranopia: strong text contrast (13:1) and red/green that
+  # stay distinct when simulated. Its base0B "green" is a pale cream.
+  base16Scheme = "${pkgs.base16-schemes}/share/themes/gigavolt.yaml";
   polarity = "dark";
   fonts = {
     serif = {
