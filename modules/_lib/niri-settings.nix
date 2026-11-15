@@ -15,6 +15,8 @@
     };
   };
   layout = {
+    # Between windows and around the screen edges (niri's default is 16).
+    gaps = 8;
     default-column-width = {
       proportion = 0.50;
     };
