@@ -12,9 +12,10 @@
 { pkgs }:
 {
   autoEnable = true;
-  # Picked for deuteranopia: strong text contrast (13:1) and red/green that
-  # stay distinct when simulated. Its base0B "green" is a pale cream.
-  base16Scheme = "${pkgs.base16-schemes}/share/themes/gigavolt.yaml";
+  # The desktop scheme (Noctalia, niri borders, GTK/Qt). Tomorrow Night: calm
+  # accents, still readable with deuteranopia (text 9.7:1). Terminals and
+  # editors get gigavolt through `crann.stylix.textScheme`.
+  base16Scheme = "${pkgs.base16-schemes}/share/themes/tomorrow-night.yaml";
   polarity = "dark";
   fonts = {
     serif = {
