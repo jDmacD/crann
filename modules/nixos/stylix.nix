@@ -46,12 +46,11 @@
         };
         textScheme = lib.mkOption {
           type = lib.types.nullOr (lib.types.either lib.types.path lib.types.str);
-          default = "${pkgs.base16-schemes}/share/themes/gigavolt.yaml";
-          defaultText = lib.literalExpression ''"''${pkgs.base16-schemes}/share/themes/gigavolt.yaml"'';
+          default = null;
           description = ''
             base16 scheme for terminals, editors and CLI tools, separate from the
             desktop's `stylix.base16Scheme` (see _lib/stylix-text-scheme.nix).
-            `null` makes them follow the desktop scheme.
+            `null` (the default) makes them follow the desktop scheme.
           '';
         };
       };
