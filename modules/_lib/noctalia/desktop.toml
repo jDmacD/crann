@@ -29,9 +29,11 @@ major_interval = 4
 visible = true
 
 [plugin_settings."jdmacd/immich-wallpaper"]
+api_key_file = "~/.config/immich-wallpaper.key"
 cache_size = 27
 folder = "/home/jmacdonald/Pictures/Immich"
 image_size = "original"
+server_url = "https://photos.jtec.xyz"
 tags = ["wallpapers/3:2"]
 
 [plugins]
