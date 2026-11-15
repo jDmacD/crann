@@ -1,11 +1,11 @@
 {
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/5b71a87bb7c7f5129b95486b650d0bddb0d8a487";
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
 
     flake-parts.url = "github:hercules-ci/flake-parts?rev=ea2630b7470978622c7689a1ff75d2b389175399";
     import-tree.url = "github:vic/import-tree?rev=eb1b52eaecc57f7c136d07ae8a93e724dfecac46";
 
-    multiverse.url = "github:fzakaria/nixpkgs-multiverse?rev=1e48e02336ab1b26061e8df8e80eaf3d749477f4";
+    multiverse.url = "github:fzakaria/nixpkgs-multiverse?rev=e2f99511444fcc7b07f1115fda35aadc1b189c6b";
 
     treefmt-nix = {
       url = "github:numtide/treefmt-nix?rev=ae7910970dddc408fe6ab1c8e4b277bb21d72dc0";
@@ -13,16 +13,16 @@
     };
 
     home-manager = {
-      url = "github:nix-community/home-manager?rev=b787c48e2ec57a9d098f5c2721882a3bc1e16f97";
+      url = "github:nix-community/home-manager?rev=82ce401aa350502897c3f2e85f384d61cd3b0b6d";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     niri = {
       # url = "github:sodiboo/niri-flake?rev=21777ada91b8b0d91a61c78294467eed232db936";
-      url = "github:epireyn/niri-flake?rev=4da0279225b1125f232ac3d38f483ee621a5ba86";
+      url = "github:epireyn/niri-flake?rev=1afb4e9b58e0e0b21926938c09d43750ab7d8dad";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     noctalia = {
-      url = "github:noctalia-dev/noctalia?rev=5e4aae910b764c7aeee411f741a266263f104375";
+      url = "github:noctalia-dev/noctalia?rev=3e17932af6c5bb36c90cf425f89935c84a8e0ec7";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     stylix = {
@@ -30,7 +30,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     llm-agents = {
-      url = "github:numtide/llm-agents.nix?rev=499fb79f92064e92cdb968d12ffeb92d36243b50";
+      url = "github:numtide/llm-agents.nix?rev=db5b3ff7fca0005b0162c3c417fb98e369534e5c";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     optnix = {

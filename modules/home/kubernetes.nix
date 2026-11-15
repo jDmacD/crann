@@ -34,9 +34,10 @@
             cilium-cli
             hubble
             argocd
+            argonaut
             stern
           ];
-          defaultText = lib.literalExpression "[ kubectl kustomize kubernetes-helm kubecm kubeswitch kubectl-cnpg cilium-cli hubble argocd ]";
+          defaultText = lib.literalExpression "[ kubectl kustomize kubernetes-helm kubecm kubeswitch kubectl-cnpg cilium-cli hubble argocd argonaut stern ]";
           description = "The kubernetes client tools to install. Replaces crann's default set.";
         };
 

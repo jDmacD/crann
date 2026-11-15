@@ -12,7 +12,10 @@
 { pkgs }:
 {
   autoEnable = true;
-  base16Scheme = "${pkgs.base16-schemes}/share/themes/material-vivid.yaml";
+  # One scheme everywhere: Ayu Dark (jDmacD's pick, 2026-11-15). Under a
+  # deuteranopia simulation its text is 14.9:1, but comments (base03) are a
+  # faint 2.1:1 and yellow (base0A) and green (base0B) look the same.
+  base16Scheme = "${pkgs.base16-schemes}/share/themes/ayu-dark.yaml";
   polarity = "dark";
   fonts = {
     serif = {

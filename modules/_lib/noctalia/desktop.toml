@@ -1,0 +1,88 @@
+# The shared Noctalia desktop, installed as ~/.config/noctalia/desktop.toml on
+# every host with crann.noctalia.desktop.enable. Loaded after config.toml
+# (crann + stylix) and before host.toml (crann.noctalia.hostSettings).
+# Fill it from the GUI with:
+#   noctalia-capture --write ~/Code/crann/modules/_lib/noctalia/desktop.toml
+
+[bar.default]
+capsule_radius = 0
+compositor_blur = false
+margin_edge = 2
+margin_ends = 2
+radius = 0
+shadow = false
+
+[control_center.media]
+show_visualizer = false
+
+[desktop_widgets.grid]
+cell_size = 16
+major_interval = 4
+visible = true
+
+[lockscreen_widgets]
+enabled = false
+
+[lockscreen_widgets.grid]
+cell_size = 16
+major_interval = 4
+visible = true
+
+[plugin_settings."jdmacd/immich-wallpaper"]
+cache_size = 27
+folder = "/home/jmacdonald/Pictures/Immich"
+image_size = "original"
+tags = ["wallpapers/3:2"]
+
+[plugins]
+enabled = ["jdmacd/immich-wallpaper"]
+
+[[plugins.source]]
+kind = "git"
+location = "https://github.com/noctalia-dev/official-plugins"
+name = "official"
+
+[[plugins.source]]
+kind = "git"
+location = "https://github.com/noctalia-dev/community-plugins"
+name = "community"
+
+[[plugins.source]]
+kind = "git"
+location = "https://github.com/jDmacD/noctalia-plugins"
+name = "jtec"
+
+[shell]
+corner_radius_scale = 0.0
+
+[shell.panel]
+control_center_placement = "floating"
+
+[shell.screen_corners]
+size = 2
+
+[shell.screenshot]
+directory = "~/Pictures/screenshots"
+
+[wallpaper]
+directory = "/home/jmacdonald/Pictures/Immich"
+directory_dark = "/home/jmacdonald/Pictures/Immich"
+directory_light = "/home/jmacdonald/Pictures/Immich"
+
+[wallpaper.automation]
+enabled = true
+
+[widget.launcher]
+enabled = false
+
+[widget.media]
+enabled = false
+
+[widget.network]
+show_label = false
+
+[widget.screenshot]
+enabled = false
+
+[widget.wallpaper]
+enabled = false

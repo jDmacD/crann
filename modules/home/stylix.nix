@@ -18,6 +18,7 @@
       pkgs,
       lib,
       config,
+      options,
       ...
     }:
     let
@@ -38,35 +39,52 @@
           default = { };
           description = "Extra stylix settings merged over crann's defaults (e.g. `image`, `base16Scheme`).";
         };
+        textScheme = lib.mkOption {
+          type = lib.types.nullOr (lib.types.either lib.types.path lib.types.str);
+          default = null;
+          description = ''
+            base16 scheme for terminals, editors and CLI tools, separate from the
+            desktop's `stylix.base16Scheme` (see _lib/stylix-text-scheme.nix).
+            `null` (the default) makes them follow the desktop scheme.
+          '';
+        };
       };
 
-      config = lib.mkIf cfg.enable {
-        stylix = lib.mkMerge [
-          (lib.mkDefault defaults)
+      config = lib.mkIf cfg.enable (
+        lib.mkMerge [
+          (import ../_lib/stylix-text-scheme.nix {
+            inherit config lib options;
+            scheme = cfg.textScheme;
+          })
           {
-            enable = true;
-            # autoEnable turns on every target regardless of whether the program
-            # is present; we run niri, so keep stylix out of hyprland's options.
-            targets.hyprland.enable = lib.mkDefault false;
-            targets.niri.enable = lib.mkDefault true;
+            stylix = lib.mkMerge [
+              (lib.mkDefault defaults)
+              {
+                enable = true;
+                # autoEnable turns on every target regardless of whether the program
+                # is present; we run niri, so keep stylix out of hyprland's options.
+                targets.hyprland.enable = lib.mkDefault false;
+                targets.niri.enable = lib.mkDefault true;
+              }
+              cfg.extraSettings
+            ];
+
+            # Icon glyphs (starship, eza --icons, vscode's terminal.integrated.fontFamily
+            # below) aren't part of any of stylix's four font categories — they're a
+            # symbols-only overlay resolved via per-glyph fontconfig fallback, not a
+            # primary UI font. Without this installed, apps that ask for codepoints in
+            # the Private Use Area just silently fall back to a font that lacks them.
+            home.packages = [ pkgs.nerd-fonts.symbols-only ];
+
+            # On standalone (non-NixOS) home-manager there is no system fontconfig
+            # pointing at the nix profile: distro fontconfig only scans
+            # /usr/share/fonts and $XDG_DATA_HOME/fonts, never ~/.nix-profile/share/fonts.
+            # Without this, every font installed above (including stylix's own
+            # defaults) sits unused in the profile and apps silently fall back to
+            # whatever distro fonts happen to already be on disk.
+            fonts.fontconfig.enable = true;
           }
-          cfg.extraSettings
-        ];
-
-        # Icon glyphs (starship, eza --icons, vscode's terminal.integrated.fontFamily
-        # below) aren't part of any of stylix's four font categories — they're a
-        # symbols-only overlay resolved via per-glyph fontconfig fallback, not a
-        # primary UI font. Without this installed, apps that ask for codepoints in
-        # the Private Use Area just silently fall back to a font that lacks them.
-        home.packages = [ pkgs.nerd-fonts.symbols-only ];
-
-        # On standalone (non-NixOS) home-manager there is no system fontconfig
-        # pointing at the nix profile: distro fontconfig only scans
-        # /usr/share/fonts and $XDG_DATA_HOME/fonts, never ~/.nix-profile/share/fonts.
-        # Without this, every font installed above (including stylix's own
-        # defaults) sits unused in the profile and apps silently fall back to
-        # whatever distro fonts happen to already be on disk.
-        fonts.fontconfig.enable = true;
-      };
+        ]
+      );
     };
 }

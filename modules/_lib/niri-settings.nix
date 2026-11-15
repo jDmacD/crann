@@ -15,6 +15,10 @@
     };
   };
   layout = {
+    # Between windows and around the screen edges (niri's default is 16).
+    gaps = 8;
+    # A hairline frame on the focused window; colours come from Stylix.
+    border.width = 1;
     default-column-width = {
       proportion = 0.50;
     };
@@ -26,6 +30,13 @@
     ];
   };
   window-rules = [
+    # Square corners everywhere: radius 0 for border and shadow, and clip
+    # the window to it so apps' own rounded corners (GTK, Firefox) go too.
+    # First, so later rules can override it.
+    {
+      geometry-corner-radius = 0.0;
+      clip-to-geometry = true;
+    }
     {
       matches = [
         { app-id = "quake"; }
