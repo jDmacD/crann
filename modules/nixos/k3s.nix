@@ -47,8 +47,10 @@
     }:
     let
       cfg = config.crann.k3s;
-      yaml = pkgs.formats.yaml { };
-      registriesFile = yaml.generate "registries.yaml" cfg.registries;
+      # JSON is valid YAML. writeText avoids pkgs.formats.yaml's remarshal, whose
+      # Python closure isn't cached for overlaid nixpkgs (the nix-pi Pi 5 hosts
+      # built it from source on first deploy).
+      registriesFile = pkgs.writeText "registries.yaml" (builtins.toJSON cfg.registries);
       # "1.35.9+k3s1" -> "k3s_1_35", the nixpkgs attribute for that minor line.
       attr = "k3s_" + lib.replaceStrings [ "." ] [ "_" ] (lib.versions.majorMinor cfg.version);
       # `%%` because the flags end up in ExecStart, where `%` is a systemd specifier.
@@ -143,7 +145,7 @@
         };
 
         registries = lib.mkOption {
-          type = yaml.type;
+          type = (pkgs.formats.json { }).type;
           default = { };
           example = {
             mirrors."docker.io".endpoint = [ "https://mirror.example.lan:5000" ];
