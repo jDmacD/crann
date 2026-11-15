@@ -3,13 +3,18 @@
   "extends": [
     "config:recommended"
   ],
-  // "lockFileMaintenance": {
-  //   "enabled": true,
-  //   "extends": ["schedule:weekly"],
-  //   "automerge": true,
-  //   "automergeType": "pr",
-  //   "platformAutomerge": true
-  // },
+  // nixpkgs tracks nixos-unstable (no rev in flake.nix), so Renovate can only
+  // move it through lock file maintenance. The channel only advances after
+  // Hydra builds it, so a weekly bump lands on a cached revision. Following
+  // master instead gave several bumps a day, ahead of cache.nixos.org.
+  // Every other input pins a rev in flake.nix, so this only moves nixpkgs.
+  "lockFileMaintenance": {
+    "enabled": true,
+    "schedule": ["* 0-5 * * 1"],
+    "automerge": true,
+    "automergeType": "pr",
+    "platformAutomerge": true
+  },
   "nix": {
     "enabled": true
   },
