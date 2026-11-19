@@ -37,7 +37,7 @@ server_url = "https://photos.jtec.xyz"
 tags = ["wallpapers/3:2"]
 
 [plugins]
-enabled = ["jdmacd/immich-wallpaper"]
+enabled = ["jdmacd/immich-wallpaper", "knyrps/nix-search"]
 
 [[plugins.source]]
 kind = "git"
