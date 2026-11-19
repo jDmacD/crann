@@ -23,7 +23,10 @@
 #             it. Creates over the project's quota fail fast and fall through.
 #
 # The client's daemon logs in as `builder` with SSH_KEY, and pins the host
-# key that snapshot-builder records with the image. With ARCH=x86_64-linux
+# key that snapshot-builder records with the image. The command also gets
+# EPHEMERAL_STORE/EPHEMERAL_SSH to use the builder directly, and, with
+# EPHEMERAL_PUSH_CREDENTIALS and EPHEMERAL_PUSH_KEY set, push credentials
+# staged on the builder (EPHEMERAL_PUSH=1); see below. With ARCH=x86_64-linux
 # the local host builds nothing (max-jobs = 0) unless LOCAL_JOBS is set to
 # something other than 0.
 {
@@ -166,8 +169,9 @@ writeShellApplication {
 
     tried=""
     errf=$(mktemp)
+    known_hosts=""
     cleanup() {
-      rm -f "$errf"
+      rm -f "$errf" ''${known_hosts:+"$known_hosts"}
       for p in $tried; do "''${p}_delete" || true; done
     }
     trap cleanup EXIT
@@ -240,6 +244,34 @@ writeShellApplication {
     if [ "$ARCH" = x86_64-linux ] && [ "''${LOCAL_JOBS:-0}" = 0 ]; then
       NIX_CONFIG="$NIX_CONFIG
     max-jobs = 0"
+    fi
+
+    # Direct access for the command, as this user (a trusted Nix user on the
+    # builder images), with the host key pinned:
+    #   EPHEMERAL_STORE  ssh-ng store URL: `nix build --store "$EPHEMERAL_STORE"
+    #                    --eval-store auto …` builds there without copying
+    #                    results back here
+    #   EPHEMERAL_SSH    user@ip;  EPHEMERAL_KNOWN_HOSTS  pinned known_hosts
+    known_hosts=$(mktemp)
+    echo "$IP $HOSTKEY" >"$known_hosts"
+    ssh_user=''${EPHEMERAL_USER:-$(id -un)}
+    export EPHEMERAL_SSH="$ssh_user@$IP" EPHEMERAL_KNOWN_HOSTS="$known_hosts"
+    export EPHEMERAL_STORE="ssh-ng://$ssh_user@$IP?base64-ssh-public-host-key=$hostkey_b64"
+    # With EPHEMERAL_PUSH_CREDENTIALS (an AWS-style credentials file) and
+    # EPHEMERAL_PUSH_KEY (a Nix signing key) set, both are copied into the
+    # builder's RAM (/dev/shm, mode 0600; gone when the server is deleted) and
+    # EPHEMERAL_PUSH=1 tells the command it can run `nix copy --to s3://…` on
+    # the builder, so results reach a binary cache without passing through
+    # this host. Use a key that can't delete (nix-pi's build-push does).
+    if [ -n "''${EPHEMERAL_PUSH_CREDENTIALS:-}" ] && [ -n "''${EPHEMERAL_PUSH_KEY:-}" ]; then
+      for f in "$EPHEMERAL_PUSH_CREDENTIALS:push.aws" "$EPHEMERAL_PUSH_KEY:push.sec"; do
+        ssh -o UserKnownHostsFile="$known_hosts" -o StrictHostKeyChecking=yes -o BatchMode=yes \
+          "$EPHEMERAL_SSH" "umask 077; cat >/dev/shm/''${f##*:}" <"''${f%:*}"
+      done
+      export EPHEMERAL_PUSH=1
+      export EPHEMERAL_PUSH_CREDENTIALS_REMOTE=/dev/shm/push.aws
+      export EPHEMERAL_PUSH_KEY_REMOTE=/dev/shm/push.sec
+      log "push credentials staged on $IP"
     fi
     log "running: $*"
     "$@"
