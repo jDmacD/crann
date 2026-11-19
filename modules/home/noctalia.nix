@@ -132,7 +132,13 @@
           };
         };
 
-        home.packages = lib.mkIf cfg.desktop.enable [ capture ];
+        home.packages = lib.mkIf cfg.desktop.enable [
+          capture
+          # Runtime tools of the knyrps/nix-search launcher provider (`/nix <query>`),
+          # enabled in desktop.toml: it indexes with nix-search-tv and filters with fzf.
+          pkgs.nix-search-tv
+          pkgs.fzf
+        ];
 
       };
     };
