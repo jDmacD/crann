@@ -5,6 +5,20 @@
 #   noctalia-capture --write ~/Code/crann/modules/_lib/noctalia/desktop.toml
 
 [bar.default]
+end = [
+  "jdmacd/nix-overview:status",
+  "media",
+  "tray",
+  "notifications",
+  "clipboard",
+  "network",
+  "bluetooth",
+  "volume",
+  "brightness",
+  "battery",
+  "control-center",
+  "session",
+]
 capsule_radius = 0
 compositor_blur = false
 margin_edge = 2
@@ -37,7 +51,7 @@ server_url = "https://photos.jtec.xyz"
 tags = ["wallpapers/3:2"]
 
 [plugins]
-enabled = ["jdmacd/immich-wallpaper", "knyrps/nix-search"]
+enabled = ["jdmacd/immich-wallpaper", "jdmacd/nix-overview", "knyrps/nix-search"]
 
 [[plugins.source]]
 kind = "git"
