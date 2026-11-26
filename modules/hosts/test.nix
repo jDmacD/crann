@@ -56,6 +56,10 @@
             url = "https://grafana.example.invalid";
             tokenFile = "/run/secrets/grafana_mcp_token";
           };
+          crann.ai-utils.mcp.zlib = {
+            enable = true;
+            proxy = "http://proxy.example.invalid:8888";
+          };
           crann.ai-utils.channels.grafana = {
             enable = true;
             host = "192.0.2.10";
