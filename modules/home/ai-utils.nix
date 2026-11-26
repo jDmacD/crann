@@ -205,6 +205,71 @@
           };
         };
 
+        mcp.zlib = {
+          enable = lib.mkEnableOption ''
+            the Z-Library MCP server (`zlib mcp` from heartleo/zlib) for Claude
+            Code. Login is the CLI's own session file
+            (~/.config/zlib/session.json, from `zlib login` or rendered by a
+            secret manager); this module doesn't manage it'';
+
+          package = lib.mkOption {
+            type = lib.types.package;
+            # crann's own package, via withSystem rather than inputs.self.
+            default = withSystem pkgs.stdenv.hostPlatform.system ({ config, ... }: config.packages.zlib-cli);
+            defaultText = lib.literalExpression "crann.packages.\${system}.zlib-cli";
+            description = "The zlib package (CLI and MCP server).";
+          };
+
+          proxy = lib.mkOption {
+            type = lib.types.nullOr lib.types.str;
+            default = null;
+            example = "http://vpn-gateway.example.lan:8888";
+            description = ''
+              HTTP proxy for all of the server's traffic (ZLIB_PROXY), e.g. a
+              VPN gateway. Set here, it applies to every call regardless of
+              the shell environment Claude Code was started from.
+            '';
+          };
+
+          allowedDir = lib.mkOption {
+            type = lib.types.nullOr lib.types.str;
+            default = "${config.home.homeDirectory}/Downloads";
+            defaultText = lib.literalExpression ''"''${config.home.homeDirectory}/Downloads"'';
+            description = "Confine downloads and local-file tools to this directory (--allowed-dir); also the default download directory. null lifts the confinement.";
+          };
+
+          readOnly = lib.mkOption {
+            type = lib.types.bool;
+            default = false;
+            description = "Pass --read-only: search and lookup tools only, no downloads.";
+          };
+
+          disable = lib.mkOption {
+            type = lib.types.listOf (
+              lib.types.enum [
+                "download"
+                "history-delete"
+                "kindle"
+                "metadata-edit"
+                "weread"
+              ]
+            );
+            default = [
+              "history-delete"
+              "kindle"
+              "weread"
+            ];
+            description = "Tool groups to turn off (--disable-<name>). The default keeps search, download and metadata tools.";
+          };
+
+          extraArgs = lib.mkOption {
+            type = lib.types.listOf lib.types.str;
+            default = [ ];
+            example = [ "--log-level=info" ];
+            description = "Extra command-line arguments for `zlib mcp`.";
+          };
+        };
+
         channels.grafana = {
           enable = lib.mkEnableOption ''
             the Grafana alerts channel: a launcher that starts Claude Code with
@@ -314,19 +379,43 @@
               claude-obsidian-guard = guardPlugin;
             }
           );
-          mcpServers = lib.mkIf cfg.mcp.grafana.enable {
-            grafana = {
-              type = "stdio";
-              command = lib.getExe cfg.mcp.grafana.package;
-              args = lib.optional cfg.mcp.grafana.readOnly "--disable-write" ++ cfg.mcp.grafana.extraArgs;
-              env = {
-                GRAFANA_URL = cfg.mcp.grafana.url;
-              }
-              // lib.optionalAttrs (cfg.mcp.grafana.tokenFile != null) {
-                GRAFANA_SERVICE_ACCOUNT_TOKEN_FILE = cfg.mcp.grafana.tokenFile;
+          mcpServers =
+            lib.optionalAttrs cfg.mcp.zlib.enable {
+              zlib =
+                let
+                  z = cfg.mcp.zlib;
+                in
+                {
+                  type = "stdio";
+                  command = lib.getExe z.package;
+                  args = [
+                    "mcp"
+                  ]
+                  ++ lib.optional z.readOnly "--read-only"
+                  ++ map (g: "--disable-${g}") z.disable
+                  ++ lib.optionals (z.allowedDir != null) [
+                    "--allowed-dir"
+                    z.allowedDir
+                  ]
+                  ++ z.extraArgs;
+                  env =
+                    lib.optionalAttrs (z.proxy != null) { ZLIB_PROXY = z.proxy; }
+                    // lib.optionalAttrs (z.allowedDir != null) { ZLIB_DOWNLOAD_DIR = z.allowedDir; };
+                };
+            }
+            // lib.optionalAttrs cfg.mcp.grafana.enable {
+              grafana = {
+                type = "stdio";
+                command = lib.getExe cfg.mcp.grafana.package;
+                args = lib.optional cfg.mcp.grafana.readOnly "--disable-write" ++ cfg.mcp.grafana.extraArgs;
+                env = {
+                  GRAFANA_URL = cfg.mcp.grafana.url;
+                }
+                // lib.optionalAttrs (cfg.mcp.grafana.tokenFile != null) {
+                  GRAFANA_SERVICE_ACCOUNT_TOKEN_FILE = cfg.mcp.grafana.tokenFile;
+                };
               };
             };
-          };
         };
 
         # Claude Code registers itself for claude-cli:// links at runtime. Once
