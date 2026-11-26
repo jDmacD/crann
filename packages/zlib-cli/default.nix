@@ -38,7 +38,8 @@ buildGoModule {
     description = "Z-Library CLI: search, download, metadata, MCP server";
     homepage = "https://github.com/heartleo/zlib";
     license = lib.licenses.mit;
-    platforms = lib.platforms.linux;
+    # Upstream releases linux and darwin builds (pure Go, CGO off).
+    platforms = lib.platforms.linux ++ lib.platforms.darwin;
     mainProgram = "zlib";
   };
 }
